@@ -2,31 +2,30 @@
  * Hello World Scene
  *
  * By: Sam Corbett
- * Version: 
+ * Version: 1.0
+ * Since: 2024/12/13
  */
 
+// Import the Phaser Scene and GameObjects
 import { Scene, GameObjects } from 'phaser';
 
+// Create the HelloWorld Scene
 export class HelloWorld extends Scene
 {
-    background: GameObjects.Image;
-    logo: GameObjects.Image;
+    // Title Property
     title: GameObjects.Text;
 
-    constructor ()
-    {
+    // Constructor
+    constructor () {
         super('HelloWorld');
     }
 
-    create ()
-    {
-        this.background = this.add.image(512, 384, 'background');
-
-        this.logo = this.add.image(512, 300, 'logo');
-
-        this.title = this.add.text(512, 460, 'Hello, World!', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+    // Create Method
+    create () {
+        // Create the Title (Hello, World!)
+        this.title = this.add.text(512, 384, 'Hello, World!', {
+            fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
+            stroke: '#028af8', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5);
     }
