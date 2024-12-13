@@ -1,13 +1,18 @@
-import { Boot } from './scenes/Boot';
-import { Game as MainGame } from './scenes/Game';
-import { GameOver } from './scenes/GameOver';
-import { MainMenu } from './scenes/MainMenu';
-import { Preloader } from './scenes/Preloader';
+/**
+ * The main container for all scenes
+ *
+ * By: Sam Corbett
+ * Version: 1.0
+ * Since: 2024/12/13
+ */
 
+// Scenes
+import { HelloWorld } from './scenes/HelloWorld';
+
+// Phaser
 import { Game, Types } from "phaser";
 
-//  Find out more information about the Game Config at:
-//  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
+// Game Configuration
 const config: Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: 1024,
@@ -19,11 +24,7 @@ const config: Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     scene: [
-        Boot,
-        Preloader,
-        MainMenu,
-        MainGame,
-        GameOver
+        HelloWorld
     ]
 };
 
