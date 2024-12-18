@@ -20,6 +20,12 @@ export class ShowImage extends Scene
         super('ShowImage');
     }
 
+    // Preload Method
+    preload () {
+    // Load the JewelBondz Logo
+        this.load.image('jewelbondz-logo', 'assets/jewelbondz-logo.png');
+    }
+    
     // Create Method
     create () {
         // Create an Image GameObject
