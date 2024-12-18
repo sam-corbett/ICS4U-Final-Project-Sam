@@ -1,0 +1,28 @@
+/**
+ * Hello World Scene
+ *
+ * By: Sam Corbett
+ * Version: 1.0
+ * Since: 2024/12/13
+ */
+
+// Import the Phaser Scene and GameObjects
+import { Scene, GameObjects } from 'phaser';
+
+// Create the ShowImage Scene
+export class ShowImage extends Scene
+{
+    // Image Property
+    image: GameObjects.Image;
+
+    // Constructor
+    constructor () {
+        super('ShowImage');
+    }
+
+    // Create Method
+    create () {
+        // Create an Image GameObject
+        this.image = this.add.image(785, 308, 'jewelbondz-logo');
+    }
+}
