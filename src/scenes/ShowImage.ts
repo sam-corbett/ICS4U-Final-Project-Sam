@@ -30,5 +30,6 @@ export class ShowImage extends Scene
     create () {
         // Create an Image GameObject
         this.image = this.add.image(785, 308, 'jewelbondz-logo');
+        this.image.setOrigin(0, 0);
     }
 }
