@@ -22,13 +22,17 @@ export class ShowImage extends Scene
 
     // Preload Method
     preload () {
+    // Load the title image
+        this.load.image('background', 'assets/title-menu-bg.png');
     // Load the JewelBondz Logo
         this.load.image('jewelbondz-logo', 'assets/jewelbondz-logo.png');
     }
     
     // Create Method
     create () {
-        // Create an Image GameObject
+        // Set the background image
+        this.add.image(960, 540, 'background');
+        // Create the Jewel Bondz Image GameObject
         this.image = this.add.image(960, 540, 'jewelbondz-logo');
         this.image.setOrigin(0.5, 0.5);
     }
