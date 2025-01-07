@@ -33,6 +33,7 @@ export class GameScene extends Scene {
     private spawnGem () {
         // Create the gem
         let gem = this.add.image(960, 540, 'gem1');
+        gem.setScale(0.5);
         gem.setInteractive();
 
         // Set the gem properties
@@ -40,13 +41,17 @@ export class GameScene extends Scene {
     }
 
     private onGemPointerDown (gem: Phaser.GameObjects.Image) {
-        // Set the gem properties
-        gem.setTint(0xff0000);
+        // Set gem tint when pointer is down
+        if (this.input.activePointer.isDown) {
+            gem.setTint(0xffffff);
+        } else {
+            gem.clearTint();
+        }
     }
 
     // Update method
     update () {
-        // Check if the pointer is down
+        // Check if the pointer is down for vector line
         if (this.input.activePointer.isDown)
         {
             this.vectorLine.onPointerMove(this.input.activePointer);
