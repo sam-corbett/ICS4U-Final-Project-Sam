@@ -17,8 +17,6 @@ export class GameScene extends Scene {
     // Constructor
     constructor () {
         super({ key: 'GameScene'});
-        this.camera = this.cameras.main
-        this.spawnGem();
     }
 
     // Preload method
@@ -27,7 +25,9 @@ export class GameScene extends Scene {
         this.load.image('gem1', 'assets/gem1.png');
     }
     create () {
+        this.camera = this.cameras.main
         this.vectorLine = new vectorLine(this);
+        this.spawnGem();
     }
 
     private spawnGem () {
