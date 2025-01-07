@@ -37,12 +37,12 @@ export class GameScene extends Scene {
         this.gem.setScale(0.07);
         this.gem.setInteractive();
 
-        // pointerdown event to the gem
+        // Add pointerdown event to the gem
         this.gem.on('pointerdown', () => {
             this.isGemClicked = true;
         });
 
-        // pointerup event to reset the flag when clicked outside the gem
+        // Add pointerup event to the input manager to reset the flag when clicking anywhere
         this.input.on('pointerup', () => {
             this.isGemClicked = false;
         });
@@ -50,10 +50,10 @@ export class GameScene extends Scene {
 
     // Update method
     update () {
-        // Check if the pointer is down for vector line
+        // Check if the pointer is down for vector line and gem is clicked
         if (this.input.activePointer.isDown && this.isGemClicked) {
             this.vectorLine.onPointerMove(this.input.activePointer);
-        } else {;
+        } else {
             this.vectorLine.onPointerUp();
         }
     }
