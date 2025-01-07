@@ -33,7 +33,7 @@ export class GameScene extends Scene {
 
     private spawnGem () {
         this.gem = this.add.image(960, 540, 'gem1');
-        this.gem.setScale(0.065);
+        this.gem.setScale(0.07);
         this.gem.setInteractive();
     }
 
