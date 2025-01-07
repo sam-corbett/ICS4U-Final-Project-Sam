@@ -42,8 +42,8 @@ export class GameScene extends Scene {
             this.isGemClicked = true;
         });
 
-        // pointerup event to the gem
-        this.gem.on('pointerup', () => {
+        // pointerup event to reset the flag when clicked outside the gem
+        this.input.on('pointerup', () => {
             this.isGemClicked = false;
         });
     }
