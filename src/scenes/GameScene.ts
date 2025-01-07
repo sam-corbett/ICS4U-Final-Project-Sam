@@ -13,6 +13,7 @@ export class GameScene extends Scene {
 
     camera: Phaser.Cameras.Scene2D.Camera;
     private vectorLine: vectorLine;
+    private gem: Phaser.GameObjects.Image;
 
     // Constructor
     constructor () {
@@ -31,13 +32,13 @@ export class GameScene extends Scene {
     }
 
     private spawnGem () {
-        // Create the gem
-        let gem = this.add.image(960, 540, 'gem1');
-        gem.setScale(0.5);
-        gem.setInteractive();
+        this.gem = this.add.image(960, 540, 'gem1');
+        this.gem.setScale(0.25);
+        this.gem.setInteractive();
+        this.gem.setInteractive();
 
         // Set the gem properties
-        gem.on('pointerdown', () => this.onGemPointerDown(gem));
+        this.gem.on('pointerdown', () => this.onGemPointerDown(this.gem));
     }
 
     private onGemPointerDown (gem: Phaser.GameObjects.Image) {
@@ -52,9 +53,16 @@ export class GameScene extends Scene {
     // Update method
     update () {
         // Check if the pointer is down for vector line
-        if (this.input.activePointer.isDown)
-        {
+        if (this.input.activePointer.isDown) {
             this.vectorLine.onPointerMove(this.input.activePointer);
+            if (this.gem) {
+                this.gem.setTint(0xffffff);
+            }
+        } else {
+            this.vectorLine.onPointerUp();
+            if (this.gem) {
+                this.gem.clearTint();
+            }
         }
     }
 }
