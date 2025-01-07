@@ -33,21 +33,8 @@ export class GameScene extends Scene {
 
     private spawnGem () {
         this.gem = this.add.image(960, 540, 'gem1');
-        this.gem.setScale(0.25);
+        this.gem.setScale(0.15);
         this.gem.setInteractive();
-        this.gem.setInteractive();
-
-        // Set the gem properties
-        this.gem.on('pointerdown', () => this.onGemPointerDown(this.gem));
-    }
-
-    private onGemPointerDown (gem: Phaser.GameObjects.Image) {
-        // Set gem tint when pointer is down
-        if (this.input.activePointer.isDown) {
-            gem.setTint(0xffffff);
-        } else {
-            gem.clearTint();
-        }
     }
 
     // Update method
@@ -58,11 +45,11 @@ export class GameScene extends Scene {
             if (this.gem) {
                 this.gem.setTint(0xffffff);
             }
-        } else {
-            this.vectorLine.onPointerUp();
+        } else {;
             if (this.gem) {
                 this.gem.clearTint();
             }
+            this.vectorLine.onPointerUp();
         }
     }
 }
