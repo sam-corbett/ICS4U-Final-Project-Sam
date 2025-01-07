@@ -33,7 +33,7 @@ export class GameScene extends Scene {
 
     private spawnGem () {
         this.gem = this.add.image(960, 540, 'gem1');
-        this.gem.setScale(0.075);
+        this.gem.setScale(0.05);
         this.gem.setInteractive();
     }
 
@@ -42,13 +42,7 @@ export class GameScene extends Scene {
         // Check if the pointer is down for vector line
         if (this.input.activePointer.isDown) {
             this.vectorLine.onPointerMove(this.input.activePointer);
-            if (this.gem) {
-                this.gem.setTint(0xffffff);
-            }
         } else {;
-            if (this.gem) {
-                this.gem.clearTint();
-            }
             this.vectorLine.onPointerUp();
         }
     }
