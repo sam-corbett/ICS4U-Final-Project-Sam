@@ -11,11 +11,13 @@ import { vectorLine } from './vectorLine';
 
 export class GameScene extends Scene {
 
+    camera: Phaser.Cameras.Scene2D.Camera;
     private vectorLine: vectorLine;
 
     // Constructor
     constructor () {
         super({ key: 'GameScene'});
+        this.camera = this.cameras.main
         this.spawnGem();
     }
 
