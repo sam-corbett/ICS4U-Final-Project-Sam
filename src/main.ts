@@ -7,7 +7,7 @@
  */
 
 // Scenes
-import { ShowImage } from './scenes/ShowImage';
+import { GameScene } from './scenes/GameScene';
 
 // Phaser
 import { Game, Types } from "phaser";
@@ -24,7 +24,7 @@ const config: Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     scene: [
-        ShowImage
+        GameScene
     ]
 };
 
