@@ -20,6 +20,14 @@ export class GameScene extends Scene {
     // Constructor
     constructor () {
         super({ key: 'GameScene'});
+
+        this.input.on('pointerup', () => {
+            if (this.vectorLine.isDrawing) {
+                this.vectorLine.clearLines();
+                this.isGemClicked = false;
+                this.selectedGem = null;
+            }
+        });
     }
 
     // Preload method
@@ -33,15 +41,6 @@ export class GameScene extends Scene {
         this.camera = this.cameras.main
         this.vectorLine = new vectorLine(this);
         this.spawnGems();
-
-        // Add pointerup event to the scene.
-        this.input.on('pointerup', () => {
-            if (this.vectorLine.isDrawing) {
-                this.vectorLine.clearLines();
-                this.isGemClicked = false;
-                this.selectedGem = null;
-            }
-        });
     }
 
     /**
@@ -72,30 +71,23 @@ export class GameScene extends Scene {
     update () {
         // Check if the pointer is down for 
         // vector line and gem is clicked
-        if (this.input.activePointer.isDown &&
-            this.isGemClicked && 
-            this.selectedGem
-        ) {
+        if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.vectorLine.onPointerMove(this.input.activePointer);
-
+        
             // Check if the pointer is over another gem
             const pointer = this.input.activePointer;
             const overlappingGem = this.gems.find(
                 gem => gem.getBounds().contains(
                     pointer.x, pointer.y
                 ) && gem !== this.selectedGem);
-
-            // If there is an overlapping gem, lock the line
-            // and start drawing from the overlapping gem
+        
             if (overlappingGem) {
                 this.vectorLine.lockLine(
                     overlappingGem.x, overlappingGem.y
                 );
                 this.isGemClicked = false;
-                this.selectedGem = overlappingGem;
-                this.vectorLine.startDrawing(
-                    overlappingGem.x, overlappingGem.y
-                );
+                this.selectedGem = overlappingGem; // Set the new selected gem
+                this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y); // Start drawing from the new gem
             }
         }
     }
