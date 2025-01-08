@@ -17,7 +17,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
 
     // Constructor
     constructor (scene: Phaser.Scene) {
-        super(scene, { lineStyle: { width: 2, color: 0xffffff } })
+        super(scene, { lineStyle: { width: 4, color: 0xffffff } })
         scene.add.existing(this)
 
         // Set the properties

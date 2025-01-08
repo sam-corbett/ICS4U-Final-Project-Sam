@@ -23,9 +23,13 @@ const config: Types.Core.GameConfig = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    scene: [
-        GameScene
-    ]
+    scene: [GameScene],
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false
+        }
+    }
 };
 
 export default new Game(config);

@@ -13,12 +13,12 @@ export class GameScene extends Scene {
 
     camera: Phaser.Cameras.Scene2D.Camera;
     private vectorLine: vectorLine;
+    private gem: Phaser.GameObjects.Image;
+    private isGemClicked: boolean = false;
 
     // Constructor
     constructor () {
         super({ key: 'GameScene'});
-        this.camera = this.cameras.main
-        this.spawnGem();
     }
 
     // Preload method
@@ -27,29 +27,34 @@ export class GameScene extends Scene {
         this.load.image('gem1', 'assets/gem1.png');
     }
     create () {
+        this.camera = this.cameras.main
         this.vectorLine = new vectorLine(this);
+        this.spawnGem();
     }
 
     private spawnGem () {
-        // Create the gem
-        let gem = this.add.image(960, 540, 'gem1');
-        gem.setInteractive();
+        this.gem = this.add.image(960, 540, 'gem1');
+        this.gem.setScale(0.07);
+        this.gem.setInteractive();
 
-        // Set the gem properties
-        gem.on('pointerdown', () => this.onGemPointerDown(gem));
-    }
+        // Add pointerdown event to the gem
+        this.gem.on('pointerdown', () => {
+            this.isGemClicked = true;
+        });
 
-    private onGemPointerDown (gem: Phaser.GameObjects.Image) {
-        // Set the gem properties
-        gem.setTint(0xff0000);
+        // Add pointerup event to the input manager to reset the flag when clicking anywhere
+        this.input.on('pointerup', () => {
+            this.isGemClicked = false;
+        });
     }
 
     // Update method
     update () {
-        // Check if the pointer is down
-        if (this.input.activePointer.isDown)
-        {
+        // Check if the pointer is down for vector line and gem is clicked
+        if (this.input.activePointer.isDown && this.isGemClicked) {
             this.vectorLine.onPointerMove(this.input.activePointer);
+        } else {
+            this.vectorLine.onPointerUp();
         }
     }
 }
