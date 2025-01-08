@@ -68,19 +68,19 @@ export class GameScene extends Scene {
     }
 
     // Update method
-    update () {
+    update() {
         // Check if the pointer is down for 
         // vector line and gem is clicked
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.vectorLine.onPointerMove(this.input.activePointer);
-        
+
             // Check if the pointer is over another gem
             const pointer = this.input.activePointer;
             const overlappingGem = this.gems.find(
                 gem => gem.getBounds().contains(
                     pointer.x, pointer.y
                 ) && gem !== this.selectedGem);
-        
+
             if (overlappingGem) {
                 this.vectorLine.lockLine(
                     overlappingGem.x, overlappingGem.y
