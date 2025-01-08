@@ -10,9 +10,9 @@ import Phaser from 'phaser'
 
 export class vectorLine extends Phaser.GameObjects.Graphics {
     // Properties
+    public isDrawing: boolean;
+    public isLocked: boolean;
     private startPoint: Phaser.Geom.Point;
-    private isDrawing: boolean;
-    private isLocked: boolean;
 
     // Constructor
     constructor(scene: Phaser.Scene) {

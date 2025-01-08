@@ -55,9 +55,9 @@ export class GameScene extends Scene {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 this.vectorLine.startDrawing(gem.x, gem.y);
-        });
+            });
+        }
     }
-}
 
     // Update method
     update () {
@@ -80,5 +80,15 @@ export class GameScene extends Scene {
                 this.selectedGem = null;
             }
         }
+
+        // Handle pointer up event
+        this.input.on('pointerup', () => {
+            if (this.vectorLine.isDrawing &&
+                !this.vectorLine.isLocked) {
+                this.vectorLine.clear();
+                this.isGemClicked = false;
+                this.selectedGem = null;
+            }
+        });
     }
 }
