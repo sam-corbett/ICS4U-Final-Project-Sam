@@ -13,8 +13,8 @@ export class GameScene extends Scene {
 
     camera: Phaser.Cameras.Scene2D.Camera;
     private vectorLine: vectorLine;
-    private gem: Phaser.GameObjects.Image;
     private isGemClicked: boolean = false;
+    private gems: Phaser.GameObjects.Image[] = [];
 
     // Constructor
     constructor () {
@@ -26,35 +26,50 @@ export class GameScene extends Scene {
         // Load the first gem
         this.load.image('gem1', 'assets/gem1.png');
     }
+
+    // Create method
     create () {
         this.camera = this.cameras.main
         this.vectorLine = new vectorLine(this);
-        this.spawnGem();
+        this.spawnGems();
     }
 
-    private spawnGem () {
-        this.gem = this.add.image(960, 540, 'gem1');
-        this.gem.setScale(0.07);
-        this.gem.setInteractive();
+    /**
+     * Spawns 2 gems on the screen in random coordinates.
+     * 
+     * @returns void
+     */
+    private spawnGems () {
+        for (let counter = 0; counter < 2; counter++) {
+            const xCord = Phaser.Math.Between(400, 1900);
+            const yCord = Phaser.Math.Between(20, 1060);
+            const gem = this.add.image(xCord, yCord, 'gem1');
+            gem.setScale(0.07);
+            gem.setInteractive();
+        
 
-        // Add pointerdown event to the gem
-        this.gem.on('pointerdown', () => {
-            this.isGemClicked = true;
+        // Add pointerdown event to the gem.
+        gem.on('pointerdown', () => {
+            if (this.isGemClicked) {
+                this.vectorLine.lockLine(xCord, yCord);
+            } else {
+                this.isGemClicked = true;
+                this.vectorLine.startDrawing(xCord, yCord);
+            }
         });
 
-        // Add pointerup event to the input manager to reset the flag when clicking anywhere
+        // Add pointerup event to the input manager to 
+        // stop drawing when clicking anywhere.
         this.input.on('pointerup', () => {
-            this.isGemClicked = false;
+            this.vectorLine.stopDrawing();
         });
+        // Add the gem to the gems array
+        this.gems.push(gem);
     }
+}
 
     // Update method
     update () {
-        // Check if the pointer is down for vector line and gem is clicked
-        if (this.input.activePointer.isDown && this.isGemClicked) {
-            this.vectorLine.onPointerMove(this.input.activePointer);
-        } else {
-            this.vectorLine.onPointerUp();
-        }
+        this.vectorLine.update();
     }
 }

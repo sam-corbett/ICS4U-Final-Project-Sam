@@ -10,53 +10,67 @@ import Phaser from 'phaser'
 
 export class vectorLine extends Phaser.GameObjects.Graphics {
     // Properties
-    private startPoint: Phaser.Geom.Point
-    private endPoint: Phaser.Geom.Point
+    private startPoint: Phaser.Geom.Point;
     private isDrawing: boolean
-
+    private isLocked: boolean
 
     // Constructor
-    constructor (scene: Phaser.Scene) {
-        super(scene, { lineStyle: { width: 4, color: 0xffffff } })
-        scene.add.existing(this)
+    constructor(scene: Phaser.Scene) {
+        super(scene, { lineStyle: { width: 4, color: 0xffffff } });
+        scene.add.existing(this);
 
-        // Set the properties
-        this.startPoint = new Phaser.Geom.Point()
-        this.endPoint = new Phaser.Geom.Point()
-        this.isDrawing = false
-
-        // Set the scene input properties
-        scene.input.on('pointerdown',
-            (pointer: Phaser.Input.Pointer) =>
-                this.onPointerDown(pointer))
-        scene.input.on('pointerup',
-            () => this.onPointerUp())
-        scene.input.on('pointermove',
-            (pointer: Phaser.Input.Pointer) =>
-                this.onPointerMove(pointer))
+        // Initialize the properties
+        this.startPoint = new Phaser.Geom.Point();
+        this.isDrawing = false;
+        this.isLocked = false;
     }
 
     // Methods
     // The event when the pointer is down
-    public onPointerDown (pointer: Phaser.Input.Pointer) {
-        this.isDrawing = true
-        this.startPoint.setTo(pointer.x, pointer.y)
+    public startDrawing(xCord: number, yCord: number) {
+        this.isDrawing = true;
+        this.isLocked = false;
+        this.startPoint.setTo(xCord, yCord);
+    }
+
+    // The event when the line is locked a gem's position
+    // while the point is still down
+    public lockLine(xCord: number, yCord: number) {
+        this.isLocked = true;
+        this.startPoint.setTo(xCord, yCord);
     }
 
     // The event when the pointer is up
-    public onPointerUp () {
-        this.isDrawing = false
-        this.clear()
+    public stopDrawing () {
+        this.isDrawing = false;
+        this.isLocked = false;
+        this.clear();
     }
 
-    // The event when the pointer is moving
-    public onPointerMove (pointer: Phaser.Input.Pointer) {
+    // Update the line
+    update() {
         if (this.isDrawing) {
-            this.endPoint.setTo(pointer.x, pointer.y)
-            this.clear()
-            this.strokeLineShape(new Phaser.Geom.Line(
-                this.startPoint.x, this.startPoint.y,
-                this.endPoint.x, this.endPoint.y))
+            this.clear();
+            let endX, endY
+            
+            // If the line is locked, the end point is 
+            // the same as the start point
+            if (this.isLocked) {
+                endX = this.startPoint.x;
+                endY = this.startPoint.y;
+            // Else, the end point is the current pointer position
+            } else {
+                endX = this.scene.input.activePointer.x;
+                endY = this.scene.input.activePointer.y;
+            }
+            
+            // Draw the line
+            this.lineBetween(
+                this.startPoint.x,
+                this.startPoint.y,
+                endX,
+                endY
+            );
         }
     }
 }
