@@ -2,7 +2,7 @@
  * The code for the vector lines in the game.
  * 
  * By: Sam Corbett
- * Version: 1.0
+ * Version: 1.5
  * Since: 2025/01/07
  */
 
@@ -13,6 +13,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
     public isLocked: boolean;
     private startPoint: Phaser.Geom.Point;
 
+    // Constructor
     constructor(scene: Phaser.Scene) {
         super(scene, { lineStyle: { width: 4, color: 0xffffff } });
         scene.add.existing(this);
@@ -22,21 +23,25 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         this.isLocked = false;
     }
 
+    // Start drawing the line
     public startDrawing(xCord: number, yCord: number) {
         this.isDrawing = true;
         this.isLocked = false;
         this.startPoint.setTo(xCord, yCord);
     }
 
+    // Lock the line
     public lockLine(xCord: number, yCord: number) {
         this.isLocked = true;
         this.startPoint.setTo(xCord, yCord);
     }
 
+    // Update the line
     public onPointerMove(pointer: Phaser.Input.Pointer) {
         this.update(pointer);
     }
 
+    // Finish drawing the line
     public update(pointer: Phaser.Input.Pointer) {
         if (this.isDrawing) {
             this.clear();
@@ -50,10 +55,16 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
                 endY = pointer.y;
             }
 
-            this.lineBetween(this.startPoint.x, this.startPoint.y, endX, endY);
+            this.lineBetween(
+                this.startPoint.x,
+                this.startPoint.y,
+                endX,
+                endY
+            );
         }
     }
 
+    // Clear the line
     public clearLines() {
         this.isDrawing = false;
         this.isLocked = false;

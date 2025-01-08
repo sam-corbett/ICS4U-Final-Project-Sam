@@ -2,7 +2,7 @@
  * The game scene. (WIP)
  * 
  * By: Sam Corbett
- * Version: 0.2
+ * Version: 0.4
  * Since: 2025/01/07
  */
 
@@ -64,7 +64,7 @@ export class GameScene extends Phaser.Scene {
 
             if (overlappingGem) {
                 this.vectorLine.lockLine(overlappingGem.x, overlappingGem.y);
-                this.isGemClicked = false;
+                this.isGemClicked = true;
                 this.selectedGem = overlappingGem;
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
             }
