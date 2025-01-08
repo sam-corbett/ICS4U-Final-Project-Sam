@@ -8,55 +8,49 @@
 
 import Phaser from 'phaser'
 
-export class vectorLine extends Phaser.GameObjects.Graphics {
+export class vectorLine extends Phaser.GameObjects.Line {
     // Properties
-    private startPoint: Phaser.Geom.Point
-    private endPoint: Phaser.Geom.Point
+    private graphics: Phaser.GameObjects.Graphics;
     private isDrawing: boolean
+    private startXCord: number;
+    private startYCord: number;
 
 
     // Constructor
-    constructor (scene: Phaser.Scene) {
-        super(scene, { lineStyle: { width: 4, color: 0xffffff } })
+    constructor(scene: Phaser.Scene) {
+        super(scene);
+        this.scene = scene 
+        this.graphics = this.scene.add.graphics(
+            { lineStyle: { width: 4, color: 0xffffff } }
+        )
         scene.add.existing(this)
 
-        // Set the properties
-        this.startPoint = new Phaser.Geom.Point()
-        this.endPoint = new Phaser.Geom.Point()
-        this.isDrawing = false
-
-        // Set the scene input properties
-        scene.input.on('pointerdown',
-            (pointer: Phaser.Input.Pointer) =>
-                this.onPointerDown(pointer))
-        scene.input.on('pointerup',
-            () => this.onPointerUp())
-        scene.input.on('pointermove',
-            (pointer: Phaser.Input.Pointer) =>
-                this.onPointerMove(pointer))
     }
 
     // Methods
     // The event when the pointer is down
-    public onPointerDown (pointer: Phaser.Input.Pointer) {
-        this.isDrawing = true
-        this.startPoint.setTo(pointer.x, pointer.y)
+    public startDrawing(xCord: number, yCord: number) {
+        this.isDrawing = true;
+        this.startXCord = xCord;
+        this.startYCord = yCord;
     }
 
     // The event when the pointer is up
-    public onPointerUp () {
+    public stopDrawing () {
         this.isDrawing = false
-        this.clear()
+        this.graphics.clear()
     }
 
-    // The event when the pointer is moving
-    public onPointerMove (pointer: Phaser.Input.Pointer) {
+    // Update the line
+    update() {
         if (this.isDrawing) {
-            this.endPoint.setTo(pointer.x, pointer.y)
-            this.clear()
-            this.strokeLineShape(new Phaser.Geom.Line(
-                this.startPoint.x, this.startPoint.y,
-                this.endPoint.x, this.endPoint.y))
+            this.graphics.clear()
+            this.graphics.lineBetween(
+                this.startXCord,
+                this.startYCord,
+                this.scene.input.x,
+                this.scene.input.y
+            )
         }
     }
 }
