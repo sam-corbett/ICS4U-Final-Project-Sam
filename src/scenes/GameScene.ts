@@ -20,14 +20,6 @@ export class GameScene extends Scene {
     // Constructor
     constructor () {
         super({ key: 'GameScene'});
-
-        this.input.on('pointerup', () => {
-            if (this.vectorLine.isDrawing) {
-                this.vectorLine.clearLines();
-                this.isGemClicked = false;
-                this.selectedGem = null;
-            }
-        });
     }
 
     // Preload method
@@ -41,6 +33,14 @@ export class GameScene extends Scene {
         this.camera = this.cameras.main
         this.vectorLine = new vectorLine(this);
         this.spawnGems();
+
+        this.input.on('pointerup', () => {
+            if (this.vectorLine.isDrawing) {
+                this.vectorLine.clearLines();
+                this.isGemClicked = false;
+                this.selectedGem = null;
+            }
+        });
     }
 
     /**
@@ -56,7 +56,6 @@ export class GameScene extends Scene {
             gem.setScale(0.07);
             gem.setInteractive();
             this.gems.push(gem);
-        
 
         // Add pointerdown event to the gem.
             gem.on('pointerdown', () => {
