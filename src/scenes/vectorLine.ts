@@ -68,4 +68,10 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
             );
         }
     }
+
+    public clearLines() {
+        this.isDrawing = false;
+        this.isLocked = false;
+        super.clear();
+    }
 }

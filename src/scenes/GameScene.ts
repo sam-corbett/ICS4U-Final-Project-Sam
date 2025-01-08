@@ -78,6 +78,9 @@ export class GameScene extends Scene {
                 );
                 this.isGemClicked = false;
                 this.selectedGem = null;
+                this.vectorLine.startDrawing(
+                    overlappingGem.x, overlappingGem.y
+                );
             }
         }
 
