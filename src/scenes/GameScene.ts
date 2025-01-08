@@ -34,7 +34,7 @@ export class GameScene extends Scene {
     }
 
     /**
-     * Spawns 2 gems on the screen.
+     * Spawns 2 gems on the screen in random coordinates.
      * 
      * @returns void
      */
