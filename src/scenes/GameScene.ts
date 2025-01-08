@@ -13,6 +13,7 @@ export class GameScene extends Scene {
 
     camera: Phaser.Cameras.Scene2D.Camera;
     private vectorLine: vectorLine;
+    private isGemClicked: boolean = false;
     private gems: Phaser.GameObjects.Image[] = [];
 
     // Constructor
@@ -48,9 +49,13 @@ export class GameScene extends Scene {
         
 
         // Add pointerdown event to the gem.
-        // Add pointerdown event to the gem.
         gem.on('pointerdown', () => {
-            this.vectorLine.startDrawing(gem.x, gem.y);
+            if (this.isGemClicked) {
+                this.vectorLine.lockLine(xCord, yCord);
+            } else {
+                this.isGemClicked = true;
+                this.vectorLine.startDrawing(xCord, yCord);
+            }
         });
 
         // Add pointerup event to the input manager to 

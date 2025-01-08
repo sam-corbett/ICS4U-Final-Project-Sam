@@ -43,6 +43,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
     // The event when the pointer is up
     public stopDrawing () {
         this.isDrawing = false;
+        this.isLocked = false;
         this.clear();
     }
 
