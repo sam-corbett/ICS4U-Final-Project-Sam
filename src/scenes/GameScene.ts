@@ -37,7 +37,7 @@ export class GameScene extends Scene {
         // Add pointerup event to the scene.
         this.input.on('pointerup', () => {
             if (this.vectorLine.isDrawing) {
-                this.vectorLine.clear();
+                this.vectorLine.clearLines();
                 this.isGemClicked = false;
                 this.selectedGem = null;
             }
