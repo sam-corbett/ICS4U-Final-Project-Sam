@@ -57,14 +57,24 @@ export class GameScene extends Scene {
                 this.vectorLine.startDrawing(gem.x, gem.y);
             });
         }
-    }
+
+            // Add pointerup event to the scene.
+            this.input.on('pointerup', () => {
+                if (this.vectorLine.isDrawing) {
+                    this.vectorLine.clear();
+                    this.isGemClicked = false;
+                    this.selectedGem = null;
+                }
+            });
+        }
 
     // Update method
     update () {
         // Check if the pointer is down for 
         // vector line and gem is clicked
         if (this.input.activePointer.isDown &&
-            this.isGemClicked && this.selectedGem
+            this.isGemClicked && 
+            this.selectedGem
         ) {
             this.vectorLine.onPointerMove(this.input.activePointer);
 
@@ -88,15 +98,5 @@ export class GameScene extends Scene {
                 );
             }
         }
-
-        // Handle pointer up event
-        this.input.on('pointerup', () => {
-            if (this.vectorLine.isDrawing &&
-                !this.vectorLine.isLocked) {
-                this.vectorLine.clear();
-                this.isGemClicked = false;
-                this.selectedGem = null;
-            }
-        });
     }
 }
