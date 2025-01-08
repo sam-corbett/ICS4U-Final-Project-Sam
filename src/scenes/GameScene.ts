@@ -33,6 +33,15 @@ export class GameScene extends Scene {
         this.camera = this.cameras.main
         this.vectorLine = new vectorLine(this);
         this.spawnGems();
+
+        // Add pointerup event to the scene.
+        this.input.on('pointerup', () => {
+            if (this.vectorLine.isDrawing) {
+                this.vectorLine.clear();
+                this.isGemClicked = false;
+                this.selectedGem = null;
+            }
+        });
     }
 
     /**
@@ -57,16 +66,7 @@ export class GameScene extends Scene {
                 this.vectorLine.startDrawing(gem.x, gem.y);
             });
         }
-
-            // Add pointerup event to the scene.
-            this.input.on('pointerup', () => {
-                if (this.vectorLine.isDrawing) {
-                    this.vectorLine.clear();
-                    this.isGemClicked = false;
-                    this.selectedGem = null;
-                }
-            });
-        }
+    }
 
     // Update method
     update () {
