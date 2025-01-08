@@ -59,7 +59,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
                 endY = pointer.y;
             }
 
-            // Draw the line
+            // Draw the line between the start and end points
             this.lineBetween(
                 this.startPoint.x,
                 this.startPoint.y,
@@ -69,6 +69,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         }
     }
 
+    // Clear the lines
     public clearLines() {
         this.isDrawing = false;
         this.isLocked = false;

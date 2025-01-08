@@ -61,8 +61,11 @@ export class GameScene extends Scene {
 
     // Update method
     update () {
-        // Check if the pointer is down for vector line and gem is clicked
-        if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
+        // Check if the pointer is down for 
+        // vector line and gem is clicked
+        if (this.input.activePointer.isDown &&
+            this.isGemClicked && this.selectedGem
+        ) {
             this.vectorLine.onPointerMove(this.input.activePointer);
 
             // Check if the pointer is over another gem
@@ -72,12 +75,14 @@ export class GameScene extends Scene {
                     pointer.x, pointer.y
                 ) && gem !== this.selectedGem);
 
+            // If there is an overlapping gem, lock the line
+            // and start drawing from the overlapping gem
             if (overlappingGem) {
                 this.vectorLine.lockLine(
                     overlappingGem.x, overlappingGem.y
                 );
                 this.isGemClicked = false;
-                this.selectedGem = null;
+                this.selectedGem = overlappingGem;
                 this.vectorLine.startDrawing(
                     overlappingGem.x, overlappingGem.y
                 );
