@@ -14,6 +14,7 @@ export class GameScene extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     private vectorLine: vectorLine;
     private isGemClicked: boolean = false;
+    private selectedGem: Phaser.GameObjects.Image | null = null;
     private gems: Phaser.GameObjects.Image[] = [];
 
     // Constructor
@@ -46,30 +47,38 @@ export class GameScene extends Scene {
             const gem = this.add.image(xCord, yCord, 'gem1');
             gem.setScale(0.07);
             gem.setInteractive();
+            this.gems.push(gem);
         
 
         // Add pointerdown event to the gem.
-        gem.on('pointerdown', () => {
-            if (this.isGemClicked) {
-                this.vectorLine.lockLine(xCord, yCord);
-            } else {
+            gem.on('pointerdown', () => {
                 this.isGemClicked = true;
-                this.vectorLine.startDrawing(xCord, yCord);
-            }
+                this.selectedGem = gem;
+                this.vectorLine.startDrawing(gem.x, gem.y);
         });
-
-        // Add pointerup event to the input manager to 
-        // stop drawing when clicking anywhere.
-        this.input.on('pointerup', () => {
-            this.vectorLine.stopDrawing();
-        });
-        // Add the gem to the gems array
-        this.gems.push(gem);
     }
 }
 
     // Update method
     update () {
-        this.vectorLine.update();
+        // Check if the pointer is down for vector line and gem is clicked
+        if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
+            this.vectorLine.onPointerMove(this.input.activePointer);
+
+            // Check if the pointer is over another gem
+            const pointer = this.input.activePointer;
+            const overlappingGem = this.gems.find(
+                gem => gem.getBounds().contains(
+                    pointer.x, pointer.y
+                ) && gem !== this.selectedGem);
+
+            if (overlappingGem) {
+                this.vectorLine.lockLine(
+                    overlappingGem.x, overlappingGem.y
+                );
+                this.isGemClicked = false;
+                this.selectedGem = null;
+            }
+        }
     }
 }
