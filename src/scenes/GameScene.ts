@@ -33,10 +33,11 @@ export class GameScene extends Phaser.Scene {
         this.vectorLine = new vectorLine(this);
         // Spawn the gems
         this.spawnGems();
-
+    
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);
-        // Pointer up event
+    
+        // Pointer up event for single gem destruction
         this.input.on('pointerup', () => {
             if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
                 this.selectedGem.destroy();
@@ -50,8 +51,6 @@ export class GameScene extends Phaser.Scene {
                 this.selectedGem = null;
                 this.isGemClicked = false;
             }
-            this.isDrawingLine = false;
-            this.vectorLine.stopDrawing();
         });
     }
 
@@ -95,14 +94,16 @@ export class GameScene extends Phaser.Scene {
             });
         }
     }
-    
+
+    // Update Method
     update() {
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
+            this.isDrawingLine = true;
             this.vectorLine.onPointerMove(this.input.activePointer);
-
+    
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
-
+    
             for (let i = 0; i < this.gems.length; i++) {
                 const gem = this.gems[i];
                 if (gem.getBounds().contains(pointer.x, pointer.y) && gem !== this.selectedGem) {
@@ -110,7 +111,7 @@ export class GameScene extends Phaser.Scene {
                     break;
                 }
             }
-
+    
             // If there is an overlapping gem
             // Lock the line and start drawing a new line on the overlapping gem
             if (overlappingGem) {
@@ -118,37 +119,46 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = true;
                 this.selectedGem = overlappingGem;
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
-
+    
                 // Debugging: Log the locked lines
                 console.log('Locked Lines:', this.vectorLine.lockedLines);
             }
+        } else {
+            this.isDrawingLine = false;
         }
     }
 
+    // Pointer Up Method
     private onPointerUp() {
         if (this.isGemClicked) {
             // Flag to indicate if a shape has been detected
             let shapeDetected = false;
-
+    
             // Check for triangle first
             if (this.isTriangle(this.vectorLine.lockedLines)) {
                 console.log('Triangle detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
                 shapeDetected = true;
             }
-
+    
             // Check for line if no triangle was detected
             if (!shapeDetected && this.isLine(this.vectorLine.lockedLines)) {
                 console.log('Line detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
             }
-
+    
             // Reset the state
             this.isGemClicked = false;
             this.selectedGem = null;
         }
     }
 
+    /**
+     * Check if the lines form a line.
+     * 
+     * @param lines The lines to check.
+     * @returns True if the lines form a line, false otherwise.
+     */
     private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         console.log('Checking if lines form a line:', lines);
         if (lines.length !== 1) return false;
@@ -159,6 +169,12 @@ export class GameScene extends Phaser.Scene {
         return isLine;
     }
 
+    /**
+     * Check if the lines form a triangle.
+     * 
+     * @param lines The lines to check.
+     * @returns True if the lines form a triangle, false otherwise.
+     */
     private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         if (lines.length !== 3) return false;
         const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
