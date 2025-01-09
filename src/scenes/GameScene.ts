@@ -27,6 +27,7 @@ export class GameScene extends Phaser.Scene {
         this.load.image('gem1', 'assets/gem1.png');
     }
 
+    // Create Method
     create() {
         // Create the vector line
         this.vectorLine = new vectorLine(this);
@@ -42,7 +43,7 @@ export class GameScene extends Phaser.Scene {
                 console.log('Gem clicked:', gem);
             }
         });
-    
+
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);
     }
@@ -127,20 +128,20 @@ export class GameScene extends Phaser.Scene {
             console.log('isGemClicked:', this.isGemClicked);
             // Flag to indicate if a shape has been detected
             let shapeDetected = false;
-    
+
             // Check for triangle first
             if (this.isTriangle(this.vectorLine.lockedLines)) {
                 console.log('Triangle detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
                 shapeDetected = true;
             }
-    
+
             // Check for line if no triangle was detected
             if (!shapeDetected && this.isLine(this.vectorLine.lockedLines)) {
                 console.log('Line detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
             }
-    
+
             // Single gem destruction logic
             if (!shapeDetected && !this.isDrawingLine && this.selectedGem) {
                 console.log('Single gem destruction logic triggered');
@@ -155,7 +156,7 @@ export class GameScene extends Phaser.Scene {
                 this.selectedGem = null;
                 this.isGemClicked = false;
             }
-    
+
             // Reset the state
             this.isGemClicked = false;
             this.selectedGem = null;
