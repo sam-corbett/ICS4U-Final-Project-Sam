@@ -41,6 +41,8 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 console.log('Gem clicked:', gem);
+                gem.destroy();
+                this.gems = this.gems.filter(g => g !== gem);
             }
         });
 
