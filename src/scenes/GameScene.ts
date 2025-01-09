@@ -15,6 +15,7 @@ export class GameScene extends Phaser.Scene {
     private isGemClicked: boolean = false;
     private selectedGem: Phaser.GameObjects.Image | null = null;
     private gems: Phaser.GameObjects.Image[] = [];
+    private isDrawing: boolean = false;
 
     // Constructor Method
     constructor() {
@@ -35,19 +36,23 @@ export class GameScene extends Phaser.Scene {
 
         // Pointer up event
         this.input.on('pointerup', () => {
-            if (this.vectorLine.isDrawing) {
-                this.vectorLine.clearLines();
-                this.isGemClicked = false;
+            if (this.isGemClicked && !this.isDrawing && this.selectedGem) {
+                this.selectedGem.destroy();
+                // Remove the gem from the array
+                for (let i = 0; i < this.gems.length; i++) {
+                    if (this.gems[i] === this.selectedGem) {
+                        this.gems.splice(i, 1);
+                        break;
+                    }
+                }
                 this.selectedGem = null;
+                this.isGemClicked = false;
             }
+            this.isDrawing = false; // Reset the flag
         });
     }
 
-    /**
-     * Spawns the gems on the screen.
-     * 
-     * @returns void
-     */
+    // Spawn Gems Method
     private spawnGems() {
         // For loop to spawn the gems
         for (let counter = 0; counter < 3; counter++) {
@@ -62,6 +67,7 @@ export class GameScene extends Phaser.Scene {
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
+                this.isDrawing = true;
                 this.vectorLine.startDrawing(gem.x, gem.y);
             });
         }
@@ -76,12 +82,18 @@ export class GameScene extends Phaser.Scene {
             this.vectorLine.onPointerMove(this.input.activePointer);
 
             const pointer = this.input.activePointer;
+            let overlappingGem: Phaser.GameObjects.Image | null = null;
+
             // Check if the pointer is overlapping with another gem
-            const overlappingGem = this.gems.find(
-                gem => gem.getBounds().contains(
+            for (let i = 0; i < this.gems.length; i++) {
+                const gem = this.gems[i];
+                if (gem.getBounds().contains(
                     pointer.x, pointer.y
-                ) && gem !== this.selectedGem
-            );
+                ) && gem !== this.selectedGem) {
+                    overlappingGem = gem;
+                    break;
+                }
+            }
 
             // If there is an overlapping gem
             // Lock the line and start drawing a new line on the overlapping gem
