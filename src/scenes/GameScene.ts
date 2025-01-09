@@ -149,9 +149,11 @@ export class GameScene extends Phaser.Scene {
     }
     
     update() {
+        // If the pointer is down and a gem is clicked
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.vectorLine.onPointerMove(this.input.activePointer);
     
+            // Check if the pointer is overlapping another
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
     
@@ -174,16 +176,19 @@ export class GameScene extends Phaser.Scene {
                 // Debugging: Log the locked lines
                 console.log('Locked Lines:', this.vectorLine.lockedLines);
     
-                // Check for line
-                const isLineResult = this.isLine(this.vectorLine.lockedLines);
-                console.log('isLine result:', isLineResult);
-                if (isLineResult) {
-                    console.log('Line detected');
-                    this.clearGemsAndLines(this.vectorLine.lockedLines);
-                }
+                // Flag to indicate if a shape has been detected
+                let shapeDetected = false;
     
+                // Check for triangle first
                 if (this.isTriangle(this.vectorLine.lockedLines)) {
                     console.log('Triangle detected');
+                    this.clearGemsAndLines(this.vectorLine.lockedLines);
+                    shapeDetected = true;
+                }
+    
+                // Check for line if no triangle was detected
+                if (!shapeDetected && this.isLine(this.vectorLine.lockedLines)) {
+                    console.log('Line detected');
                     this.clearGemsAndLines(this.vectorLine.lockedLines);
                 }
             }
