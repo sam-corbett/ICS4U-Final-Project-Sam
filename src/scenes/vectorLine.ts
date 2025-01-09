@@ -17,6 +17,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         x1: number, y1: number, 
         x2: number, y2: number 
     }[] = [];
+    private line: Phaser.GameObjects.Line | null = null;
 
     // Constructor
     constructor(scene: Phaser.Scene) {
@@ -45,6 +46,13 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
             y2: yCord
         });
         this.startPoint.setTo(xCord, yCord);
+    }
+
+    public stopDrawing() {
+        if (this.line) {
+            this.line.destroy();
+            this.line = null;
+        }
     }
 
     // Update the line

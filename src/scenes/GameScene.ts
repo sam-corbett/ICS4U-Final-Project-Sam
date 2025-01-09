@@ -49,7 +49,7 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = false;
             }
             this.isDrawingLine = false;
-            this.vectorLine.isDrawing = false;
+            this.vectorLine.stopDrawing();
         });
     }
 
@@ -68,13 +68,26 @@ export class GameScene extends Phaser.Scene {
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
-                this.isDrawingLine = true;
 
-                // Delay to check if the pointer is still down
+                // Check if the pointer is still down after a short delay
                 this.time.delayedCall(150, () => {
                     if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
                         this.vectorLine.startDrawing(gem.x, gem.y);
+                    } else {
+                        // Remove the gem immediately if the pointer is not down
+                        if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
+                            this.selectedGem.destroy();
+                            // Remove the gem from the array
+                            for (let counter = 0; counter < this.gems.length; counter++) {
+                                if (this.gems[counter] === this.selectedGem) {
+                                    this.gems.splice(counter, 1);
+                                    break;
+                                }
+                            }
+                            this.selectedGem = null;
+                            this.isGemClicked = false;
+                        }
                     }
                 });
             });
