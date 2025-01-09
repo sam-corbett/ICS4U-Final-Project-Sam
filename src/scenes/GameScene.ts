@@ -94,12 +94,13 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    private isLine(lines: { 
-        x1: number, y1: number,
-        x2: number, y2: number }[]): boolean {
+    private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
+        console.log('Checking if lines form a line:', lines);
         if (lines.length !== 1) return false;
         const line = lines[0];
-        return (line.x1 === line.x2 || line.y1 === line.y2);
+        const isLine = (line.x1 === line.x2 || line.y1 === line.y2);
+        console.log('isLine:', isLine);
+        return isLine;
     }
     
     //private isTriangle(lines: {
@@ -173,11 +174,14 @@ export class GameScene extends Phaser.Scene {
                 console.log('Locked Lines:', this.vectorLine.lockedLines);
     
                 // Check for line
-                if (this.isLine(this.vectorLine.lockedLines)) {
+                const isLineResult = this.isLine(this.vectorLine.lockedLines);
+                console.log('isLine result:', isLineResult);
+                if (isLineResult) {
                     console.log('Line detected');
                     this.clearGemsAndLines(this.vectorLine.lockedLines);
                 }
-
+    
+                // Comment out the triangle check for now
                 // if (this.isTriangle(this.vectorLine.lockedLines)) {
                 //     console.log('Triangle detected');
                 //     this.clearGemsAndLines(this.vectorLine.lockedLines);
