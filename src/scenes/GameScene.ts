@@ -102,26 +102,26 @@ export class GameScene extends Phaser.Scene {
         return (line.x1 === line.x2 || line.y1 === line.y2);
     }
     
-    private isTriangle(lines: {
-        x1: number, y1: number,
-        x2: number, y2: number }[]): boolean {
-        if (lines.length !== 3) return false;
-        const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
-        if (points.size !== 3) return false;
+    //private isTriangle(lines: {
+    //    x1: number, y1: number,
+    //    x2: number, y2: number }[]): boolean {
+    //    if (lines.length !== 3) return false;
+    //    const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
+    //    if (points.size !== 3) return false;
     
-        const pointArray = Array.from(points).map(point => point.split(',').map(Number));
-        const [p1, p2, p3] = pointArray;
+    //    const pointArray = Array.from(points).map(point => point.split(',').map(Number));
+    //    const [p1, p2, p3] = pointArray;
     
-        const isConnected = (a: number[], b: number[]) => 
-            lines.some(line => 
-                (line.x1 === a[0] && line.y1 === a[1] &&
-                    line.x2 === b[0] && line.y2 === b[1]) ||
-                (line.x1 === b[0] && line.y1 === b[1] &&
-                    line.x2 === a[0] && line.y2 === a[1])
-            );
+    //    const isConnected = (a: number[], b: number[]) => 
+    //        lines.some(line => 
+    //            (line.x1 === a[0] && line.y1 === a[1] &&
+    //                line.x2 === b[0] && line.y2 === b[1]) ||
+    //            (line.x1 === b[0] && line.y1 === b[1] &&
+    //                line.x2 === a[0] && line.y2 === a[1])
+    //        );
     
-        return isConnected(p1, p2) && isConnected(p2, p3) && isConnected(p3, p1);
-    }
+    //    return isConnected(p1, p2) && isConnected(p2, p3) && isConnected(p3, p1);
+    //}
     
     /**
      * Clear the gems and lines that form a line or triangle.
@@ -146,7 +146,6 @@ export class GameScene extends Phaser.Scene {
         this.vectorLine.clearLines();
     }
     
-    // Ensure the update method correctly calls clearGemsAndLines when a line is detected
     update() {
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.vectorLine.onPointerMove(this.input.activePointer);
@@ -170,15 +169,19 @@ export class GameScene extends Phaser.Scene {
                 this.selectedGem = overlappingGem;
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
     
+                // Debugging: Log the locked lines
+                console.log('Locked Lines:', this.vectorLine.lockedLines);
+    
                 // Check for line
                 if (this.isLine(this.vectorLine.lockedLines)) {
+                    console.log('Line detected');
                     this.clearGemsAndLines(this.vectorLine.lockedLines);
                 }
-    
-                // Check for triangle
-                if (this.isTriangle(this.vectorLine.lockedLines)) {
-                    this.clearGemsAndLines(this.vectorLine.lockedLines);
-                }
+
+                // if (this.isTriangle(this.vectorLine.lockedLines)) {
+                //     console.log('Triangle detected');
+                //     this.clearGemsAndLines(this.vectorLine.lockedLines);
+                // }
             }
         }
     }
