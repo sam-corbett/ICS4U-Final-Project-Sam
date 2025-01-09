@@ -131,13 +131,27 @@ export class GameScene extends Phaser.Scene {
     }
     
     private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
-        return lines.length === 1 && (lines[0].x1 === lines[0].x2 || lines[0].y1 === lines[0].y2);
+        if (lines.length < 2) return false;
+        const isHorizontal = lines.every(line => line.y1 === line.y2);
+        const isVertical = lines.every(line => line.x1 === line.x2);
+        return isHorizontal || isVertical;
     }
     
     private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         if (lines.length !== 3) return false;
         const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
-        return points.size === 3;
+        if (points.size !== 3) return false;
+    
+        const pointArray = Array.from(points).map(point => point.split(',').map(Number));
+        const [p1, p2, p3] = pointArray;
+    
+        const isConnected = (a: number[], b: number[]) => 
+            lines.some(line => 
+                (line.x1 === a[0] && line.y1 === a[1] && line.x2 === b[0] && line.y2 === b[1]) ||
+                (line.x1 === b[0] && line.y1 === b[1] && line.x2 === a[0] && line.y2 === a[1])
+            );
+    
+        return isConnected(p1, p2) && isConnected(p2, p3) && isConnected(p3, p1);
     }
     
     /**
