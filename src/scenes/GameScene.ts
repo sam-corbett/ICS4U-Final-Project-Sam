@@ -106,8 +106,8 @@ export class GameScene extends Phaser.Scene {
             let overlappingGem: Phaser.GameObjects.Image | null = null;
 
             // Check if the pointer is overlapping with another gem
-            for (let i = 0; i < this.gems.length; i++) {
-                const gem = this.gems[i];
+            for (let counter = 0; counter < this.gems.length; counter++) {
+                const gem = this.gems[counter];
                 if (gem.getBounds().contains(
                     pointer.x, pointer.y
                 ) && gem !== this.selectedGem) {
@@ -125,13 +125,18 @@ export class GameScene extends Phaser.Scene {
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
             }
 
-            // Check for a line
+            // Debugging: Log lockedLines
+            console.log('Locked Lines:', this.vectorLine.lockedLines);
+
+            // Check for line
             if (this.isLine(this.vectorLine.lockedLines)) {
+                console.log('Line detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
             }
 
-            // Check for a triangle
+            // Check for triangle
             if (this.isTriangle(this.vectorLine.lockedLines)) {
+                console.log('Triangle detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
             }
         }
@@ -143,12 +148,8 @@ export class GameScene extends Phaser.Scene {
      * @param lines The lines to check.
      * @returns True if the lines are valid, false otherwise.
      */
-    private isLine(lines: { x1: number,
-        y1: number, x2: number, y2: number }[]): boolean {
-        return lines.length === 1 && (
-            lines[0].x1 === lines[0].x2 ||
-            lines[0].y1 === lines[0].y2
-        );
+    private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
+        return lines.length === 1 && (lines[0].x1 === lines[0].x2 || lines[0].y1 === lines[0].y2);
     }
 
     /**
@@ -157,13 +158,9 @@ export class GameScene extends Phaser.Scene {
      * @param lines The lines to check.
      * @returns True if the lines form a triangle, false otherwise
      */
-    private isTriangle(lines: { x1: number,
-        y1: number, x2: number, y2: number }[]): boolean {
+    private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         if (lines.length !== 3) return false;
-        const points = new Set(lines.flatMap(
-            line => [`${line.x1},${line.y1}`,
-                `${line.x2},${line.y2}`
-            ]));
+        const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
         return points.size === 3;
     }
 
@@ -172,15 +169,12 @@ export class GameScene extends Phaser.Scene {
      * 
      * @param lines The lines to check.
      */
-    private clearGemsAndLines(lines: { x1: number,
-        y1: number, x2: number, y2: number }[]) {
+    private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
         // Clear the gems and lines
         this.gems = this.gems.filter(gem => {
             const isGemInLine = lines.some(line => 
-                (gem.x === line.x1 && gem.y === line.y1) ||
-                (gem.x === line.x2 && gem.y === line.y2)
+                (gem.x === line.x1 && gem.y === line.y1) || (gem.x === line.x2 && gem.y === line.y2)
             );
-            // Destroy the gem if it is in the line
             if (isGemInLine) {
                 gem.destroy();
             }
