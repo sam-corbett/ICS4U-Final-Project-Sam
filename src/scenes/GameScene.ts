@@ -27,7 +27,6 @@ export class GameScene extends Phaser.Scene {
         this.load.image('gem1', 'assets/gem1.png');
     }
 
-    // Create Method
     create() {
         // Create the vector line
         this.vectorLine = new vectorLine(this);
@@ -46,27 +45,6 @@ export class GameScene extends Phaser.Scene {
     
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);
-    
-        // Pointer up event for single gem destruction
-        this.input.on('pointerup', () => {
-            console.log('Pointer up event triggered');
-            console.log('isGemClicked:', this.isGemClicked);
-            console.log('isDrawingLine:', this.isDrawingLine);
-            console.log('selectedGem:', this.selectedGem);
-            if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
-                console.log('Single gem destruction logic triggered');
-                this.selectedGem.destroy();
-                // Remove the gem from the array
-                for (let counter = 0; counter < this.gems.length; counter++) {
-                    if (this.gems[counter] === this.selectedGem) {
-                        this.gems.splice(counter, 1);
-                        break;
-                    }
-                }
-                this.selectedGem = null;
-                this.isGemClicked = false;
-            }
-        });
     }
 
     // Spawn Gems Method
@@ -161,6 +139,21 @@ export class GameScene extends Phaser.Scene {
             if (!shapeDetected && this.isLine(this.vectorLine.lockedLines)) {
                 console.log('Line detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
+            }
+    
+            // Single gem destruction logic
+            if (!shapeDetected && !this.isDrawingLine && this.selectedGem) {
+                console.log('Single gem destruction logic triggered');
+                this.selectedGem.destroy();
+                // Remove the gem from the array
+                for (let counter = 0; counter < this.gems.length; counter++) {
+                    if (this.gems[counter] === this.selectedGem) {
+                        this.gems.splice(counter, 1);
+                        break;
+                    }
+                }
+                this.selectedGem = null;
+                this.isGemClicked = false;
             }
     
             // Reset the state
