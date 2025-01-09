@@ -49,6 +49,7 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = false;
             }
             this.isDrawingLine = false;
+            this.vectorLine.isDrawing = false;
         });
     }
 
@@ -68,7 +69,14 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 this.isDrawingLine = true;
-                this.vectorLine.startDrawing(gem.x, gem.y);
+
+                // Delay to check if the pointer is still down
+                this.time.delayedCall(150, () => {
+                    if (this.input.activePointer.isDown) {
+                        this.isDrawingLine = true;
+                        this.vectorLine.startDrawing(gem.x, gem.y);
+                    }
+                });
             });
         }
     }
