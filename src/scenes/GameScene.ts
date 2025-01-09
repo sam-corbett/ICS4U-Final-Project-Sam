@@ -42,6 +42,9 @@ export class GameScene extends Phaser.Scene {
             console.log('Pointer up event triggered');
             if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
                 console.log('Single gem destruction logic triggered');
+                console.log('isGemClicked:', this.isGemClicked);
+                console.log('isDrawingLine:', this.isDrawingLine);
+                console.log('selectedGem:', this.selectedGem);
                 this.selectedGem.destroy();
                 // Remove the gem from the array
                 for (let counter = 0; counter < this.gems.length; counter++) {
