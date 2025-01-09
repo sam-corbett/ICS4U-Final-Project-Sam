@@ -1,5 +1,5 @@
 /**
- * The code for the vector lines in the game.
+ * The class for the vector lines in the game.
  * 
  * By: Sam Corbett
  * Version: 1.5
@@ -9,6 +9,7 @@
 import Phaser from 'phaser';
 
 export class vectorLine extends Phaser.GameObjects.Graphics {
+    // Properties
     public isDrawing: boolean;
     public isLocked: boolean;
     private startPoint: Phaser.Geom.Point;
@@ -76,6 +77,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
                 endY = pointer.y;
             }
 
+            // Draw the line between the start and end points
             this.lineBetween(
                 this.startPoint.x,
                 this.startPoint.y,
