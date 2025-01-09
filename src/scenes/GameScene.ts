@@ -144,23 +144,25 @@ export class GameScene extends Phaser.Scene {
     }
 
     private onPointerUp() {
+        console.log('onPointerUp triggered');
         if (this.isGemClicked) {
+            console.log('isGemClicked:', this.isGemClicked);
             // Flag to indicate if a shape has been detected
             let shapeDetected = false;
-
+    
             // Check for triangle first
             if (this.isTriangle(this.vectorLine.lockedLines)) {
                 console.log('Triangle detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
                 shapeDetected = true;
             }
-
+    
             // Check for line if no triangle was detected
             if (!shapeDetected && this.isLine(this.vectorLine.lockedLines)) {
                 console.log('Line detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
             }
-
+    
             // Reset the state
             this.isGemClicked = false;
             this.selectedGem = null;
