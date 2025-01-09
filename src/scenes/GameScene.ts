@@ -135,7 +135,7 @@ export class GameScene extends Phaser.Scene {
             if (this.isTriangle(this.vectorLine.lockedLines)) {
                 console.log('Triangle detected');
                 this.clearGemsAndLines(this.vectorLine.lockedLines);
-                shapeDetected = true;
+            shapeDetected = true;
             }
 
             // Check for line if no triangle was detected
@@ -149,19 +149,11 @@ export class GameScene extends Phaser.Scene {
                 console.log('Single gem destruction logic triggered');
                 this.selectedGem.destroy();
                 // Remove the gem from the array
-                for (let counter = 0; counter < this.gems.length; counter++) {
-                    if (this.gems[counter] === this.selectedGem) {
-                        this.gems.splice(counter, 1);
-                        break;
-                    }
-                }
+                this.gems = this.gems.filter(g => g !== this.selectedGem);
+                // Reset the state
                 this.selectedGem = null;
                 this.isGemClicked = false;
             }
-
-            // Reset the state
-            this.isGemClicked = false;
-            this.selectedGem = null;
         }
     }
 
