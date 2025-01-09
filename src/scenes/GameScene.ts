@@ -94,6 +94,59 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
+    private isLine(lines: { 
+        x1: number, y1: number,
+        x2: number, y2: number }[]): boolean {
+        if (lines.length !== 1) return false;
+        const line = lines[0];
+        return (line.x1 === line.x2 || line.y1 === line.y2);
+    }
+    
+    private isTriangle(lines: {
+        x1: number, y1: number,
+        x2: number, y2: number }[]): boolean {
+        if (lines.length !== 3) return false;
+        const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
+        if (points.size !== 3) return false;
+    
+        const pointArray = Array.from(points).map(point => point.split(',').map(Number));
+        const [p1, p2, p3] = pointArray;
+    
+        const isConnected = (a: number[], b: number[]) => 
+            lines.some(line => 
+                (line.x1 === a[0] && line.y1 === a[1] &&
+                    line.x2 === b[0] && line.y2 === b[1]) ||
+                (line.x1 === b[0] && line.y1 === b[1] &&
+                    line.x2 === a[0] && line.y2 === a[1])
+            );
+    
+        return isConnected(p1, p2) && isConnected(p2, p3) && isConnected(p3, p1);
+    }
+    
+    /**
+     * Clear the gems and lines that form a line or triangle.
+     * 
+     * @param lines The lines to check.
+     */
+    private clearGemsAndLines(lines: {
+        x1: number, y1: number,
+        x2: number, y2: number }[]) {
+        // Filter out gems that are part of the lines
+        this.gems = this.gems.filter(gem => {
+            const isGemInLine = lines.some(line => 
+                (gem.x === line.x1 && gem.y === line.y1) || (gem.x === line.x2 && gem.y === line.y2)
+            );
+            if (isGemInLine) {
+                gem.destroy(); // Destroy the gem if it is part of the lines
+            }
+            return !isGemInLine; // Keep gems that are not part of the lines
+        });
+    
+        // Clear the lines from the vectorLine object
+        this.vectorLine.clearLines();
+    }
+    
+    // Ensure the update method correctly calls clearGemsAndLines when a line is detected
     update() {
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.vectorLine.onPointerMove(this.input.activePointer);
@@ -128,59 +181,5 @@ export class GameScene extends Phaser.Scene {
                 }
             }
         }
-    }
-
-    /**
-     * Check if the lines form a line.
-     * 
-     * @param lines The lines to check.
-     */
-    private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
-        if (lines.length !== 1) return false;
-        const line = lines[0];
-        return (line.x1 === line.x2 || line.y1 === line.y2);
-    }
-
-    /**
-     * Check if the lines form a triangle.
-     * 
-     * @param lines The lines to check.
-     */
-    private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
-        if (lines.length !== 3) return false;
-        const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
-        if (points.size !== 3) return false;
-    
-        const pointArray = Array.from(points).map(point => point.split(',').map(Number));
-        const [p1, p2, p3] = pointArray;
-    
-        const isConnected = (a: number[], b: number[]) => 
-            lines.some(line => 
-                (line.x1 === a[0] && line.y1 === a[1] && line.x2 === b[0] && line.y2 === b[1]) ||
-                (line.x1 === b[0] && line.y1 === b[1] && line.x2 === a[0] && line.y2 === a[1])
-            );
-    
-        return isConnected(p1, p2) && isConnected(p2, p3) && isConnected(p3, p1);
-    }
-    
-    /**
-     * Clear the gems and lines that form a triangle.
-     * 
-     * @param lines The lines to check.
-     */
-    private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
-        // Filter out gems that are part of the lines
-        this.gems = this.gems.filter(gem => {
-            const isGemInLine = lines.some(line => 
-                (gem.x === line.x1 && gem.y === line.y1) || (gem.x === line.x2 && gem.y === line.y2)
-            );
-            if (isGemInLine) {
-                gem.destroy(); // Destroy the gem if it is part of the lines
-            }
-            return !isGemInLine; // Keep gems that are not part of the lines
-        });
-    
-        // Clear the lines from the vectorLine object
-        this.vectorLine.clearLines();
     }
 }
