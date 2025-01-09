@@ -98,7 +98,8 @@ export class GameScene extends Phaser.Scene {
         console.log('Checking if lines form a line:', lines);
         if (lines.length !== 1) return false;
         const line = lines[0];
-        const isLine = (line.x1 === line.x2 || line.y1 === line.y2);
+        // Check if the line has two distinct points
+        const isLine = (line.x1 !== line.x2 || line.y1 !== line.y2);
         console.log('isLine:', isLine);
         return isLine;
     }
