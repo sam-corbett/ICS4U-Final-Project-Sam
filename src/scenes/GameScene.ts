@@ -129,14 +129,23 @@ export class GameScene extends Phaser.Scene {
             }
         }
     }
-    
+
+    /**
+     * Check if the lines form a line.
+     * 
+     * @param lines The lines to check.
+     */
     private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
-        if (lines.length < 2) return false;
-        const isHorizontal = lines.every(line => line.y1 === line.y2);
-        const isVertical = lines.every(line => line.x1 === line.x2);
-        return isHorizontal || isVertical;
+        if (lines.length !== 1) return false;
+        const line = lines[0];
+        return (line.x1 === line.x2 || line.y1 === line.y2);
     }
-    
+
+    /**
+     * Check if the lines form a triangle.
+     * 
+     * @param lines The lines to check.
+     */
     private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         if (lines.length !== 3) return false;
         const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
@@ -160,16 +169,18 @@ export class GameScene extends Phaser.Scene {
      * @param lines The lines to check.
      */
     private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
-        // Clear the gems and lines
+        // Filter out gems that are part of the lines
         this.gems = this.gems.filter(gem => {
             const isGemInLine = lines.some(line => 
                 (gem.x === line.x1 && gem.y === line.y1) || (gem.x === line.x2 && gem.y === line.y2)
             );
             if (isGemInLine) {
-                gem.destroy();
+                gem.destroy(); // Destroy the gem if it is part of the lines
             }
-            return !isGemInLine;
+            return !isGemInLine; // Keep gems that are not part of the lines
         });
+    
+        // Clear the lines from the vectorLine object
         this.vectorLine.clearLines();
     }
 }
