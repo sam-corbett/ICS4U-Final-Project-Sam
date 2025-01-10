@@ -124,19 +124,19 @@ export class GameScene extends Phaser.Scene {
             }
 
             if (!this.selectedGem.getBounds().contains(endX, endY)) {
-                this.selectedGem.destroy();
-                this.gems = this.gems.filter(gem => gem !== this.selectedGem);
-                this.selectedGem = null;
-                this.isGemClicked = false;
+                this.vectorLine.stopDrawing();
             } else {
                 const lines = this.vectorLine.lockedLines;
                 if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
                 } else if (this.isLine(lines)) {
-                    this.clearGemsAndLines(lines);
+                    this.clearLinesOnly();
+                } else {
+                    this.vectorLine.clearLines();
                 }
             }
-            this.vectorLine.stopDrawing();
+            this.isGemClicked = false;
+            this.selectedGem = null;
         }
     }
 
@@ -164,6 +164,10 @@ export class GameScene extends Phaser.Scene {
             }
             return !isGemInLine;
         });
+        this.vectorLine.clearLines();
+    }
+    
+    private clearLinesOnly() {
         this.vectorLine.clearLines();
     }
 }
