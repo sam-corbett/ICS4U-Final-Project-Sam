@@ -135,7 +135,7 @@ export class GameScene extends Phaser.Scene {
                 } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
                 } else if (this.isLine(lines)) {
-                    this.clearLinesOnly();
+                    this.clearGemsAndLines(lines);
                 } else {
                     this.vectorLine.clearLines();
                 }
@@ -169,10 +169,6 @@ export class GameScene extends Phaser.Scene {
             }
             return !isGemInLine;
         });
-        this.vectorLine.clearLines();
-    }
-    
-    private clearLinesOnly() {
         this.vectorLine.clearLines();
     }
 }
