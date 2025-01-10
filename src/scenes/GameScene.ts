@@ -122,12 +122,17 @@ export class GameScene extends Phaser.Scene {
                 endX = this.input.activePointer.x;
                 endY = this.input.activePointer.y;
             }
-
+    
+            const lines = this.vectorLine.lockedLines;
+    
             if (!this.selectedGem.getBounds().contains(endX, endY)) {
                 this.vectorLine.stopDrawing();
+                this.vectorLine.clearLines();
             } else {
-                const lines = this.vectorLine.lockedLines;
-                if (this.isTriangle(lines)) {
+                if (lines.length === 0) {
+                    this.selectedGem.destroy();
+                    this.gems = this.gems.filter(gem => gem !== this.selectedGem);
+                } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
                 } else if (this.isLine(lines)) {
                     this.clearLinesOnly();
@@ -139,11 +144,11 @@ export class GameScene extends Phaser.Scene {
             this.selectedGem = null;
         }
     }
-
+    
     private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         return lines.length === 1;
     }
-
+    
     private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         if (lines.length !== 3) return false;
         const [line1, line2, line3] = lines;
@@ -153,7 +158,7 @@ export class GameScene extends Phaser.Scene {
             line3.x1 === line2.x2 && line3.y1 === line2.y2
         );
     }
-
+    
     private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
         this.gems = this.gems.filter(gem => {
             const isGemInLine = lines.some(line => 
