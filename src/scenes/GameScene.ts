@@ -40,7 +40,7 @@ export class GameScene extends Phaser.Scene {
         this.vectorLine = new vectorLine(this);
         // Spawn the gems
         this.spawnGems();
-    
+
         // Add event listener for pointerdown
         this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             const gem = this.gems.find(gem => gem.getBounds().contains(pointer.x, pointer.y));
@@ -48,7 +48,6 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 console.log('Gem clicked:', gem);
-                this.destroyGem(gem);
             }
         });
 
@@ -56,61 +55,40 @@ export class GameScene extends Phaser.Scene {
         this.input.on('pointerup', this.onPointerUp, this);
     }
 
-    // Spawn Gems Method
-    private spawnGems() {
-        // For loop to spawn the gems
-        for (let counter = 0; counter < 3; counter++) {
-            const xCord = Phaser.Math.Between(400, 1900);
-            const yCord = Phaser.Math.Between(20, 1060);
-            const gem = this.add.image(xCord, yCord, 'gem1');
-            gem.setScale(0.07);
-            gem.setInteractive();
-            this.gems.push(gem);
+    private onPointerUp() {
+        console.log('onPointerUp triggered');
+        if (this.isGemClicked) {
+            console.log('isGemClicked:', this.isGemClicked);
+            // Flag to indicate if a shape has been detected
+            let shapeDetected = false;
 
-            // Pointer down event
-            gem.on('pointerdown', () => {
-                this.isGemClicked = true;
-                this.selectedGem = gem;
+            // Check for triangle first
+            if (this.isTriangle(this.vectorLine.lockedLines)) {
+                console.log('Triangle detected');
+                this.clearGemsAndLines(this.vectorLine.lockedLines);
+                shapeDetected = true;
+            }
 
-                // Check if the pointer is still down after a short delay
-                this.time.delayedCall(150, () => {
-                    if (this.input.activePointer.isDown) {
-                        this.isDrawingLine = true;
-                        this.vectorLine.startDrawing(gem.x, gem.y);
-                    } else {
-                        // Remove the gem immediately if the pointer is not down
-                        if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
-                            this.selectedGem.destroy();
-                            // Remove the gem from the array
-                            for (let counter = 0; counter < this.gems.length; counter++) {
-                                if (this.gems[counter] === this.selectedGem) {
-                                    this.gems.splice(counter, 1);
-                                    break;
-                                }
-                            }
-                            this.selectedGem = null;
-                            this.isGemClicked = false;
-                        }
-                    }
-                });
-            });
+            // Check for line if no triangle was detected
+            if (!shapeDetected && this.isLine(this.vectorLine.lockedLines)) {
+                console.log('Line detected');
+                this.clearGemsAndLines(this.vectorLine.lockedLines);
+                shapeDetected = true;
+            }
+
+            // Single gem destruction logic
+            if (!shapeDetected && !this.isDrawingLine && this.selectedGem) {
+                console.log('Single gem destruction logic triggered');
+                this.selectedGem.destroy();
+                // Remove the gem from the array
+                this.gems = this.gems.filter(g => g !== this.selectedGem);
+                // Reset the state
+                this.selectedGem = null;
+                this.isGemClicked = false;
+            }
         }
     }
 
-        // Method to destroy the gem
-        private destroyGem(gem: Phaser.GameObjects.Image) {
-            gem.destroy();
-            this.gems = this.gems.filter(g => g !== gem);
-            this.clearGemsAndLines(this.vectorLine.lockedLines);
-        }
-    
-        // Method to handle pointer up event
-        private onPointerUp() {
-            this.isGemClicked = false;
-            this.selectedGem = null;
-        }
-
-    // Update Method
     update() {
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.isDrawingLine = true;
@@ -138,9 +116,46 @@ export class GameScene extends Phaser.Scene {
                 // Debugging: Log the locked lines
                 console.log('Locked Lines:', this.vectorLine.lockedLines);
             }
-        } else {
-            this.isDrawingLine = false;
         }
+    }
+
+
+    // Spawn Gems Method
+    private spawnGems() {
+        // For loop to spawn the gems
+        for (let counter = 0; counter < 3; counter++) {
+            const xCord = Phaser.Math.Between(400, 1900);
+            const yCord = Phaser.Math.Between(20, 1060);
+            const gem = this.add.image(xCord, yCord, 'gem1');
+            this.gems.push(gem);
+        }
+    }
+
+    private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
+        if (lines.length !== 3) return false;
+        const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
+        if (points.size !== 3) return false;
+
+        const pointArray = Array.from(points).map(point => point.split(',').map(Number));
+        const [p1, p2, p3] = pointArray;
+
+        const isConnected = (a: number[], b: number[]) => 
+            lines.some(line => 
+                (line.x1 === a[0] && line.y1 === a[1] && line.x2 === b[0] && line.y2 === b[1]) ||
+                (line.x1 === b[0] && line.y1 === b[1] && line.x2 === a[0] && line.y2 === a[1])
+            );
+
+        return isConnected(p1, p2) && isConnected(p2, p3) && isConnected(p3, p1);
+    }
+
+    private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
+        console.log('Checking if lines form a line:', lines);
+        if (lines.length !== 1) return false;
+        const line = lines[0];
+        // Check if the line has two distinct points
+        const isLine = (line.x1 !== line.x2 || line.y1 !== line.y2);
+        console.log('isLine:', isLine);
+        return isLine;
     }
 
     /**
