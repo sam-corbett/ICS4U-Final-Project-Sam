@@ -33,10 +33,15 @@ export class GameScene extends Phaser.Scene {
         this.vectorLine = new vectorLine(this);
         // Spawn the gems
         this.spawnGems();
-
-        // Pointer up event
+    
+        // Add event listener for pointerup
+        this.input.on('pointerup', this.onPointerUp, this);
+    
+        // Pointer up event for single gem destruction
         this.input.on('pointerup', () => {
+            console.log('Pointer up event triggered');
             if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
+                console.log('Single gem destruction logic triggered');
                 this.selectedGem.destroy();
                 // Remove the gem from the array
                 for (let counter = 0; counter < this.gems.length; counter++) {
@@ -48,8 +53,6 @@ export class GameScene extends Phaser.Scene {
                 this.selectedGem = null;
                 this.isGemClicked = false;
             }
-            this.isDrawingLine = false;
-            this.vectorLine.stopDrawing();
         });
     }
 
@@ -96,21 +99,16 @@ export class GameScene extends Phaser.Scene {
 
     // Update Method
     update() {
-        // If the pointer is down and the gem is clicked
-        if (this.input.activePointer.isDown &&
-            this.isGemClicked &&
-            this.selectedGem) {
+        if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
+            this.isDrawingLine = true;
             this.vectorLine.onPointerMove(this.input.activePointer);
 
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
 
-            // Check if the pointer is overlapping with another gem
             for (let i = 0; i < this.gems.length; i++) {
                 const gem = this.gems[i];
-                if (gem.getBounds().contains(
-                    pointer.x, pointer.y
-                ) && gem !== this.selectedGem) {
+                if (gem.getBounds().contains(pointer.x, pointer.y) && gem !== this.selectedGem) {
                     overlappingGem = gem;
                     break;
                 }
@@ -123,7 +121,84 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = true;
                 this.selectedGem = overlappingGem;
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
+
+                // Debugging: Log the locked lines
+                console.log('Locked Lines:', this.vectorLine.lockedLines);
             }
+        } else {
+            this.isDrawingLine = false;
         }
+    }
+
+    private onPointerUp() {
+        if (this.isGemClicked) {
+            // Flag to indicate if a shape has been detected
+            let shapeDetected = false;
+
+            // Check for triangle first
+            if (this.isTriangle(this.vectorLine.lockedLines)) {
+                console.log('Triangle detected');
+                this.clearGemsAndLines(this.vectorLine.lockedLines);
+                shapeDetected = true;
+            }
+
+            // Check for line if no triangle was detected
+            if (!shapeDetected && this.isLine(this.vectorLine.lockedLines)) {
+                console.log('Line detected');
+                this.clearGemsAndLines(this.vectorLine.lockedLines);
+            }
+
+            // Reset the state
+            this.isGemClicked = false;
+            this.selectedGem = null;
+        }
+    }
+
+    private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
+        console.log('Checking if lines form a line:', lines);
+        if (lines.length !== 1) return false;
+        const line = lines[0];
+        // Check if the line has two distinct points
+        const isLine = (line.x1 !== line.x2 || line.y1 !== line.y2);
+        console.log('isLine:', isLine);
+        return isLine;
+    }
+
+    private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
+        if (lines.length !== 3) return false;
+        const points = new Set(lines.flatMap(line => [`${line.x1},${line.y1}`, `${line.x2},${line.y2}`]));
+        if (points.size !== 3) return false;
+
+        const pointArray = Array.from(points).map(point => point.split(',').map(Number));
+        const [p1, p2, p3] = pointArray;
+
+        const isConnected = (a: number[], b: number[]) => 
+            lines.some(line => 
+                (line.x1 === a[0] && line.y1 === a[1] && line.x2 === b[0] && line.y2 === b[1]) ||
+                (line.x1 === b[0] && line.y1 === b[1] && line.x2 === a[0] && line.y2 === a[1])
+            );
+
+        return isConnected(p1, p2) && isConnected(p2, p3) && isConnected(p3, p1);
+    }
+
+    /**
+     * Clear the gems and lines that form a line or triangle.
+     * 
+     * @param lines The lines to check.
+     */
+    private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
+        // Filter out gems that are part of the lines
+        this.gems = this.gems.filter(gem => {
+            const isGemInLine = lines.some(line => 
+                (gem.x === line.x1 && gem.y === line.y1) || (gem.x === line.x2 && gem.y === line.y2)
+            );
+            if (isGemInLine) {
+                gem.destroy(); // Destroy the gem if it is part of the lines
+            }
+            return !isGemInLine; // Keep gems that are not part of the lines
+        });
+
+        // Clear the lines from the vectorLine object
+        this.vectorLine.clearLines();
     }
 }
