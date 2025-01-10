@@ -12,7 +12,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
     // Properties
     public isDrawing: boolean;
     public isLocked: boolean;
-    private startPoint: Phaser.Geom.Point;
+    public startPoint: Phaser.Geom.Point;
     public lockedLines: { 
         x1: number, y1: number, 
         x2: number, y2: number 
@@ -53,6 +53,10 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
             this.line.destroy();
             this.line = null;
         }
+    }
+
+    getLines() {
+        return this.line;
     }
 
     // Update the line

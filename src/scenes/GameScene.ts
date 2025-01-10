@@ -131,26 +131,32 @@ export class GameScene extends Phaser.Scene {
     }
 
     private onPointerUp() {
-        if (this.isGemClicked) {
-            // Flag to indicate if a shape has been detected
-            let shapeDetected = false;
-
-            // Check for triangle first
-            if (this.isTriangle(this.vectorLine.lockedLines)) {
-                console.log('Triangle detected');
-                this.clearGemsAndLines(this.vectorLine.lockedLines);
-                shapeDetected = true;
+        if (this.isGemClicked && this.selectedGem) {
+            let endX, endY;
+            if (this.vectorLine.isLocked) {
+                endX = this.vectorLine.startPoint.x;
+                endY = this.vectorLine.startPoint.y;
+            } else {
+                endX = this.input.activePointer.x;
+                endY = this.input.activePointer.y;
             }
-
-            // Check for line if no triangle was detected
-            if (!shapeDetected && this.isLine(this.vectorLine.lockedLines)) {
-                console.log('Line detected');
-                this.clearGemsAndLines(this.vectorLine.lockedLines);
+    
+            if (!this.selectedGem.getBounds().contains(endX, endY)) {
+                this.selectedGem.destroy();
+                this.gems = this.gems.filter(gem => gem !== this.selectedGem);
+                this.selectedGem = null;
+                this.isGemClicked = false;
+            } else {
+                const lines = this.vectorLine.getLines();
+                if (Array.isArray(lines) && this.isTriangle(lines)) {
+                    this.clearGemsAndLines(lines);
+                } else if (Array.isArray(lines) && this.isLine(lines)) {
+                    this.clearGemsAndLines(lines);
+                }
             }
-
-            // Reset the state
-            this.isGemClicked = false;
-            this.selectedGem = null;
+    
+            this.isDrawingLine = false;
+            this.vectorLine.stopDrawing();
         }
     }
 
