@@ -36,24 +36,6 @@ export class GameScene extends Phaser.Scene {
     
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);
-    
-        // Pointer up event for single gem destruction
-        this.input.on('pointerup', () => {
-            console.log('Pointer up event triggered');
-            if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
-                console.log('Single gem destruction logic triggered');
-                this.selectedGem.destroy();
-                // Remove the gem from the array
-                for (let counter = 0; counter < this.gems.length; counter++) {
-                    if (this.gems[counter] === this.selectedGem) {
-                        this.gems.splice(counter, 1);
-                        break;
-                    }
-                }
-                this.selectedGem = null;
-                this.isGemClicked = false;
-            }
-        });
     }
 
     // Spawn Gems Method
