@@ -127,6 +127,8 @@ export class GameScene extends Phaser.Scene {
             const xCord = Phaser.Math.Between(400, 1900);
             const yCord = Phaser.Math.Between(20, 1060);
             const gem = this.add.image(xCord, yCord, 'gem1');
+            gem.setScale(0.07);
+            gem.setInteractive();
             this.gems.push(gem);
         }
     }
