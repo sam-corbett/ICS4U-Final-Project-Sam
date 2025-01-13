@@ -16,7 +16,7 @@ export class GameScene extends Phaser.Scene {
     private selectedGem: Phaser.GameObjects.Image | null = null;
     private gems: Phaser.GameObjects.Image[] = [];
     private isDrawingLine: boolean = false;
-    private numberOfGems: number = 6;
+    private numGemsToSpawn: number = 6;
 
     // Constructor Method
     constructor() {
@@ -42,12 +42,8 @@ export class GameScene extends Phaser.Scene {
     // Spawn Gems Method
     private spawnGems() {
         const gemSize = 720 * 0.07; // estimated size of the gem
-        
-        // Clear the gems array before spawning new gems
-        this.gems = [];
-        console.log('Spawning', this.numberOfGems, 'gems');
     
-        for (let counter1 = 0; counter1 < this.numberOfGems; counter1++) {
+        for (let counter1 = 0; counter1 < this.numGemsToSpawn; counter1++) {
             let xCord, yCord, gem, overlap;
     
             do {
@@ -69,10 +65,8 @@ export class GameScene extends Phaser.Scene {
             gem.setScale(0.07);
             gem.setInteractive();
             this.gems.push(gem);
-            console.log('Gem spawned at:', xCord, yCord);
     
             gem.on('pointerdown', () => {
-                console.log('Gem clicked:', gem);
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 this.time.delayedCall(150, () => {
@@ -81,19 +75,11 @@ export class GameScene extends Phaser.Scene {
                         this.vectorLine.startDrawing(gem.x, gem.y);
                     } else {
                         if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
-                            console.log('Destroying gem:', this.selectedGem);
                             this.selectedGem.destroy();
                             this.gems = this.gems.filter(g => g !== this.selectedGem);
                             this.selectedGem = null;
                             this.isGemClicked = false;
-    
-                            // Check if all gems are cleared
-                            if (this.gems.length === 0) {
-                                console.log('All gems cleared. Spawning new set of gems.');
-                                this.numberOfGems++;
-                                console.log('New number of gems:', this.numberOfGems);
-                                this.spawnGems();
-                            }
+                            this.checkAndRespawnGems();
                         }
                     }
                 });
@@ -134,6 +120,7 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
+    // Pointer Up Method
     private onPointerUp() {
         if (this.isGemClicked && this.selectedGem) {
             let endX, endY;
@@ -168,7 +155,7 @@ export class GameScene extends Phaser.Scene {
             this.vectorLine.clearLines();
         }
     }
-    
+
     private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         return lines.length === 1;
     }
@@ -189,7 +176,7 @@ export class GameScene extends Phaser.Scene {
     
         return isTriangle;
     }
-    
+
     private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
         this.gems = this.gems.filter(gem => {
             const isGemInLine = lines.some(line => 
@@ -201,6 +188,7 @@ export class GameScene extends Phaser.Scene {
             return !isGemInLine;
         });
         this.vectorLine.clearLines();
+        this.checkAndRespawnGems();
     }
 
     private clearGemsInsideTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
@@ -223,5 +211,14 @@ export class GameScene extends Phaser.Scene {
             }
             return true;
         });
+        this.checkAndRespawnGems();
     }
+
+        // Check if all gems are cleared and respawn if necessary
+        private checkAndRespawnGems() {
+            if (this.gems.length === 0) {
+                this.numGemsToSpawn++;
+                this.spawnGems();
+            }
+        }
 }
