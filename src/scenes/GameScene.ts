@@ -141,6 +141,7 @@ export class GameScene extends Phaser.Scene {
                 if (lines.length === 0) {
                     this.selectedGem.destroy();
                     this.gems = this.gems.filter(gem => gem !== this.selectedGem);
+                    this.checkAndRespawnGems();
                 } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
                     this.clearGemsInsideTriangle(lines);
@@ -211,6 +212,19 @@ export class GameScene extends Phaser.Scene {
             }
             return true;
         });
+    
+        // Remove the gems forming the triangle
+        const triangleGems = this.gems.filter(gem => 
+            (gem.x === line1.x1 && gem.y === line1.y1) ||
+            (gem.x === line2.x1 && gem.y === line2.y1) ||
+            (gem.x === line3.x1 && gem.y === line3.y1)
+        );
+    
+        for (let counter = 0; counter < triangleGems.length; counter++) {
+            triangleGems[counter].destroy();
+        }
+        this.gems = this.gems.filter(gem => !triangleGems.includes(gem));
+    
         this.checkAndRespawnGems();
     }
 
