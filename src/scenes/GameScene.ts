@@ -16,6 +16,7 @@ export class GameScene extends Phaser.Scene {
     private selectedGem: Phaser.GameObjects.Image | null = null;
     private gems: Phaser.GameObjects.Image[] = [];
     private isDrawingLine: boolean = false;
+    private numberOfGems: number = 6;
 
     // Constructor Method
     constructor() {
@@ -42,7 +43,7 @@ export class GameScene extends Phaser.Scene {
     private spawnGems() {
         const gemSize = 720 * 0.07; // estimated size of the gem
     
-        for (let counter1 = 0; counter1 < 4; counter1++) {
+        for (let counter1 = 0; counter1 < this.numberOfGems; counter1++) {
             let xCord, yCord, gem, overlap;
     
             do {
@@ -78,6 +79,12 @@ export class GameScene extends Phaser.Scene {
                             this.gems = this.gems.filter(g => g !== this.selectedGem);
                             this.selectedGem = null;
                             this.isGemClicked = false;
+
+                            // Check if all gems are cleared
+                            if (this.gems.length === 0) {
+                                this.numberOfGems++;
+                                this.spawnGems();
+                            }
                         }
                     }
                 });
