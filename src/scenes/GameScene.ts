@@ -40,7 +40,7 @@ export class GameScene extends Phaser.Scene {
 
     // Spawn Gems Method
     private spawnGems() {
-        const gemSize = 720 * 0.07; // The estimated size of a gem
+        const gemSize = 720 * 0.07; // Effective size of the gem after scaling
     
         for (let counter = 0; counter < 4; counter++) {
             let xCord, yCord, gem, overlap;
@@ -50,8 +50,8 @@ export class GameScene extends Phaser.Scene {
                 yCord = Phaser.Math.Between(20, 1060);
                 overlap = false;
     
-                for (let counter = 0; counter < this.gems.length; counter++) {
-                    const existingGem = this.gems[counter];
+                for (let i = 0; i < this.gems.length; i++) {
+                    const existingGem = this.gems[i];
                     const distance = Phaser.Math.Distance.Between(xCord, yCord, existingGem.x, existingGem.y);
                     if (distance < gemSize) {
                         overlap = true;
@@ -81,6 +81,13 @@ export class GameScene extends Phaser.Scene {
                         }
                     }
                 });
+            });
+    
+            gem.on('pointermove', () => {
+                if (this.isGemClicked && this.selectedGem && !this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
+                    this.isDrawingLine = true;
+                    this.vectorLine.startDrawing(gem.x, gem.y);
+                }
             });
         }
     }
@@ -178,7 +185,7 @@ export class GameScene extends Phaser.Scene {
         });
         this.vectorLine.clearLines();
     }
-
+    
     private clearGemsInsideTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
         const [line1, line2, line3] = lines;
     
