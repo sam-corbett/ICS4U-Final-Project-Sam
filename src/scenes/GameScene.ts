@@ -15,6 +15,7 @@ export class GameScene extends Phaser.Scene {
     private isGemClicked: boolean = false;
     private selectedGem: Phaser.GameObjects.Image | null = null;
     private gems: Phaser.GameObjects.Image[] = [];
+    private isDrawingLine: boolean = false;
 
     // Constructor Method
     constructor() {
@@ -52,11 +53,14 @@ export class GameScene extends Phaser.Scene {
             this.gems.push(gem);
 
             gem.on('pointerdown', () => {
+                console.log('Gem clicked:', gem);
                 this.isGemClicked = true;
                 this.selectedGem = gem;
 
                 this.time.delayedCall(150, () => {
                     if (this.input.activePointer.isDown) {
+                        this.isDrawingLine = true;
+                        console.log('Started drawing line from gem:', gem);
                         this.vectorLine.startDrawing(gem.x, gem.y);
                     }
                 });
@@ -77,7 +81,11 @@ export class GameScene extends Phaser.Scene {
 
     // Update Method
     update() {
+        if (this.isDrawingLine) {
+            console.log('Drawing line');
+        }
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
+            this.isDrawingLine = true;
             this.vectorLine.onPointerMove(this.input.activePointer);
 
             const pointer = this.input.activePointer;
@@ -127,6 +135,8 @@ export class GameScene extends Phaser.Scene {
                 }
             }
 
+            this.isDrawingLine = false;
+            console.log('Stopped drawing line');
             this.vectorLine.stopDrawing();
         }
     }
