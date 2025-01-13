@@ -40,9 +40,9 @@ export class GameScene extends Phaser.Scene {
 
     // Spawn Gems Method
     private spawnGems() {
-        const gemSize = 720 * 0.07; // estimated size of the gem
+        const gemSize = 720 * 0.07; // The estimated size of a gem
     
-        for (let counter1 = 0; counter1 < 4; counter1++) {
+        for (let counter = 0; counter < 4; counter++) {
             let xCord, yCord, gem, overlap;
     
             do {
@@ -50,8 +50,8 @@ export class GameScene extends Phaser.Scene {
                 yCord = Phaser.Math.Between(20, 1060);
                 overlap = false;
     
-                for (let counter2 = 0; counter2 < this.gems.length; counter2++) {
-                    const existingGem = this.gems[counter2];
+                for (let counter = 0; counter < this.gems.length; counter++) {
+                    const existingGem = this.gems[counter];
                     const distance = Phaser.Math.Distance.Between(xCord, yCord, existingGem.x, existingGem.y);
                     if (distance < gemSize) {
                         overlap = true;
@@ -69,7 +69,7 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 this.time.delayedCall(150, () => {
-                    if (this.input.activePointer.isDown) {
+                    if (this.input.activePointer.isDown && this.selectedGem && !this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
                         this.isDrawingLine = true;
                         this.vectorLine.startDrawing(gem.x, gem.y);
                     } else {
