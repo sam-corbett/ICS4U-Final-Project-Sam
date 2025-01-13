@@ -69,24 +69,30 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 this.time.delayedCall(150, () => {
-                    if (this.input.activePointer.isDown && this.selectedGem && !this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
-                        this.isDrawingLine = true;
-                        this.vectorLine.startDrawing(gem.x, gem.y);
-                    } else {
-                        if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
-                            this.selectedGem.destroy();
-                            this.gems = this.gems.filter(g => g !== this.selectedGem);
-                            this.selectedGem = null;
-                            this.isGemClicked = false;
+                    if (this.input.activePointer.isDown && this.selectedGem) {
+                        if (!this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
+                            this.isDrawingLine = true;
+                            this.vectorLine.startDrawing(gem.x, gem.y);
+                        } else {
+                            if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
+                                this.selectedGem.destroy();
+                                this.gems = this.gems.filter(g => g !== this.selectedGem);
+                                this.selectedGem = null;
+                                this.isGemClicked = false;
+                            }
                         }
                     }
                 });
             });
     
             gem.on('pointermove', () => {
-                if (this.isGemClicked && this.selectedGem && !this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
-                    this.isDrawingLine = true;
-                    this.vectorLine.startDrawing(gem.x, gem.y);
+                if (this.isGemClicked && this.selectedGem) {
+                    if (!this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
+                        this.isDrawingLine = true;
+                        this.vectorLine.startDrawing(gem.x, gem.y);
+                    } else {
+                        this.isDrawingLine = false;
+                    }
                 }
             });
         }
