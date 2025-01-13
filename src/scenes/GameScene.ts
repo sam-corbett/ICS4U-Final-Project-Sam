@@ -68,40 +68,33 @@ export class GameScene extends Phaser.Scene {
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
-                this.time.delayedCall(150, () => {
-                    if (this.input.activePointer.isDown && this.selectedGem) {
-                        if (!this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
-                            this.isDrawingLine = true;
-                            this.vectorLine.startDrawing(gem.x, gem.y);
-                        } else {
-                            if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
-                                this.selectedGem.destroy();
-                                this.gems = this.gems.filter(g => g !== this.selectedGem);
-                                this.selectedGem = null;
-                                this.isGemClicked = false;
-                            }
-                        }
-                    }
-                });
             });
     
             gem.on('pointermove', () => {
                 if (this.isGemClicked && this.selectedGem) {
                     if (!this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
                         this.isDrawingLine = true;
-                        this.vectorLine.startDrawing(gem.x, gem.y);
-                    } else {
-                        this.isDrawingLine = false;
+                        this.vectorLine.startDrawing(this.selectedGem.x, this.selectedGem.y);
                     }
+                }
+            });
+    
+            gem.on('pointerup', () => {
+                if (this.isGemClicked && this.selectedGem) {
+                    if (!this.isDrawingLine) {
+                        this.selectedGem.destroy();
+                        this.gems = this.gems.filter(g => g !== this.selectedGem);
+                    }
+                    this.isGemClicked = false;
+                    this.selectedGem = null;
+                    this.isDrawingLine = false;
                 }
             });
         }
     }
 
-    // Update Method
     update() {
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
-            this.isDrawingLine = true;
             this.vectorLine.onPointerMove(this.input.activePointer);
     
             const pointer = this.input.activePointer;
@@ -126,8 +119,6 @@ export class GameScene extends Phaser.Scene {
                 // Debugging: Log the locked lines
                 console.log('Locked Lines:', this.vectorLine.lockedLines);
             }
-        } else {
-            this.isDrawingLine = false;
         }
     }
     
