@@ -92,10 +92,13 @@ export class GameScene extends Phaser.Scene {
             });
         }
     }
-
+    
+    // Update Method
     update() {
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
-            this.vectorLine.onPointerMove(this.input.activePointer);
+            if (this.isDrawingLine) {
+                this.vectorLine.onPointerMove(this.input.activePointer);
+            }
     
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
