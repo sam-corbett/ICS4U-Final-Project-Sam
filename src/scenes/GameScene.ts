@@ -45,6 +45,7 @@ export class GameScene extends Phaser.Scene {
         
         // Clear the gems array before spawning new gems
         this.gems = [];
+        console.log('Spawning', this.numberOfGems, 'gems');
     
         for (let counter1 = 0; counter1 < this.numberOfGems; counter1++) {
             let xCord, yCord, gem, overlap;
@@ -68,8 +69,10 @@ export class GameScene extends Phaser.Scene {
             gem.setScale(0.07);
             gem.setInteractive();
             this.gems.push(gem);
+            console.log('Gem spawned at:', xCord, yCord);
     
             gem.on('pointerdown', () => {
+                console.log('Gem clicked:', gem);
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 this.time.delayedCall(150, () => {
@@ -78,6 +81,7 @@ export class GameScene extends Phaser.Scene {
                         this.vectorLine.startDrawing(gem.x, gem.y);
                     } else {
                         if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
+                            console.log('Destroying gem:', this.selectedGem);
                             this.selectedGem.destroy();
                             this.gems = this.gems.filter(g => g !== this.selectedGem);
                             this.selectedGem = null;
