@@ -82,8 +82,9 @@ export class GameScene extends Phaser.Scene {
     // Update Method
     update() {
         if (this.isDrawingLine) {
-            console.log('Drawing line');
+            console.log('Drawing line...');
         }
+
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.isDrawingLine = true;
             this.vectorLine.onPointerMove(this.input.activePointer);
@@ -124,6 +125,10 @@ export class GameScene extends Phaser.Scene {
                 this.gems = this.gems.filter(gem => gem !== this.selectedGem);
                 this.selectedGem = null;
                 this.isGemClicked = false;
+                this.isDrawingLine = false;
+                console.log('Stopped drawing line');
+                this.vectorLine.clearLines();
+                this.vectorLine.stopDrawing();
             } else {
                 const lines = this.vectorLine.getLines();
                 if (Array.isArray(lines) && this.isTriangle(lines)) {
@@ -133,11 +138,10 @@ export class GameScene extends Phaser.Scene {
                 } else if (Array.isArray(lines) && lines.length > 3) {
                     this.vectorLine.clearLines();
                 }
+                this.isDrawingLine = false;
+                console.log('Stopped drawing line');
+                this.vectorLine.stopDrawing();
             }
-
-            this.isDrawingLine = false;
-            console.log('Stopped drawing line');
-            this.vectorLine.stopDrawing();
         }
     }
 
