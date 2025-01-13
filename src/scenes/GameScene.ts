@@ -42,6 +42,9 @@ export class GameScene extends Phaser.Scene {
     // Spawn Gems Method
     private spawnGems() {
         const gemSize = 720 * 0.07; // estimated size of the gem
+        
+        // Clear the gems array before spawning new gems
+        this.gems = [];
     
         for (let counter1 = 0; counter1 < this.numberOfGems; counter1++) {
             let xCord, yCord, gem, overlap;
@@ -79,10 +82,12 @@ export class GameScene extends Phaser.Scene {
                             this.gems = this.gems.filter(g => g !== this.selectedGem);
                             this.selectedGem = null;
                             this.isGemClicked = false;
-
+    
                             // Check if all gems are cleared
                             if (this.gems.length === 0) {
+                                console.log('All gems cleared. Spawning new set of gems.');
                                 this.numberOfGems++;
+                                console.log('New number of gems:', this.numberOfGems);
                                 this.spawnGems();
                             }
                         }
