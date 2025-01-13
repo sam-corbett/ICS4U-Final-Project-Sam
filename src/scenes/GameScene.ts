@@ -40,36 +40,42 @@ export class GameScene extends Phaser.Scene {
 
     // Spawn Gems Method
     private spawnGems() {
-        // For loop to spawn the gems
-        for (let counter = 0; counter < 4; counter++) {
-            const xCord = Phaser.Math.Between(400, 1900);
-            const yCord = Phaser.Math.Between(20, 1060);
-            const gem = this.add.image(xCord, yCord, 'gem1');
+        const gemSize = 720 * 0.07; // estimated size of the gem
+    
+        for (let counter1 = 0; counter1 < 4; counter1++) {
+            let xCord, yCord, gem, overlap;
+    
+            do {
+                xCord = Phaser.Math.Between(400, 1900);
+                yCord = Phaser.Math.Between(20, 1060);
+                overlap = false;
+    
+                for (let counter2 = 0; counter2 < this.gems.length; counter2++) {
+                    const existingGem = this.gems[counter2];
+                    const distance = Phaser.Math.Distance.Between(xCord, yCord, existingGem.x, existingGem.y);
+                    if (distance < gemSize) {
+                        overlap = true;
+                        break;
+                    }
+                }
+            } while (overlap);
+    
+            gem = this.add.image(xCord, yCord, 'gem1');
             gem.setScale(0.07);
             gem.setInteractive();
             this.gems.push(gem);
-
-            // Pointer down event
+    
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
-
-                // Check if the pointer is still down after a short delay
                 this.time.delayedCall(150, () => {
                     if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
                         this.vectorLine.startDrawing(gem.x, gem.y);
                     } else {
-                        // Remove the gem immediately if the pointer is not down
                         if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
                             this.selectedGem.destroy();
-                            // Remove the gem from the array
-                            for (let counter = 0; counter < this.gems.length; counter++) {
-                                if (this.gems[counter] === this.selectedGem) {
-                                    this.gems.splice(counter, 1);
-                                    break;
-                                }
-                            }
+                            this.gems = this.gems.filter(g => g !== this.selectedGem);
                             this.selectedGem = null;
                             this.isGemClicked = false;
                         }
