@@ -40,9 +40,9 @@ export class GameScene extends Phaser.Scene {
 
     // Spawn Gems Method
     private spawnGems() {
-        const gemSize = 720 * 0.07; // Effective size of the gem after scaling
+        const gemSize = 720 * 0.07; // estimated size of the gem
     
-        for (let counter = 0; counter < 4; counter++) {
+        for (let counter1 = 0; counter1 < 4; counter1++) {
             let xCord, yCord, gem, overlap;
     
             do {
@@ -50,8 +50,8 @@ export class GameScene extends Phaser.Scene {
                 yCord = Phaser.Math.Between(20, 1060);
                 overlap = false;
     
-                for (let i = 0; i < this.gems.length; i++) {
-                    const existingGem = this.gems[i];
+                for (let counter2 = 0; counter2 < this.gems.length; counter2++) {
+                    const existingGem = this.gems[counter2];
                     const distance = Phaser.Math.Distance.Between(xCord, yCord, existingGem.x, existingGem.y);
                     if (distance < gemSize) {
                         overlap = true;
@@ -68,41 +68,32 @@ export class GameScene extends Phaser.Scene {
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
-            });
-    
-            gem.on('pointermove', () => {
-                if (this.isGemClicked && this.selectedGem) {
-                    if (!this.selectedGem.getBounds().contains(this.input.activePointer.x, this.input.activePointer.y)) {
+                this.time.delayedCall(150, () => {
+                    if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
-                        this.vectorLine.startDrawing(this.selectedGem.x, this.selectedGem.y);
+                        this.vectorLine.startDrawing(gem.x, gem.y);
+                    } else {
+                        if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
+                            this.selectedGem.destroy();
+                            this.gems = this.gems.filter(g => g !== this.selectedGem);
+                            this.selectedGem = null;
+                            this.isGemClicked = false;
+                        }
                     }
-                }
-            });
-    
-            gem.on('pointerup', () => {
-                if (this.isGemClicked && this.selectedGem) {
-                    if (!this.isDrawingLine) {
-                        this.selectedGem.destroy();
-                        this.gems = this.gems.filter(g => g !== this.selectedGem);
-                    }
-                    this.isGemClicked = false;
-                    this.selectedGem = null;
-                    this.isDrawingLine = false;
-                }
+                });
             });
         }
     }
-    
+
     // Update Method
     update() {
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
-            if (this.isDrawingLine) {
-                this.vectorLine.onPointerMove(this.input.activePointer);
-            }
-    
+            this.isDrawingLine = true;
+            this.vectorLine.onPointerMove(this.input.activePointer);
+
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
-    
+
             for (let i = 0; i < this.gems.length; i++) {
                 const gem = this.gems[i];
                 if (gem.getBounds().contains(pointer.x, pointer.y) && gem !== this.selectedGem) {
@@ -110,7 +101,7 @@ export class GameScene extends Phaser.Scene {
                     break;
                 }
             }
-    
+
             // If there is an overlapping gem
             // Lock the line and start drawing a new line on the overlapping gem
             if (overlappingGem) {
@@ -118,13 +109,15 @@ export class GameScene extends Phaser.Scene {
                 this.isGemClicked = true;
                 this.selectedGem = overlappingGem;
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
-    
+
                 // Debugging: Log the locked lines
                 console.log('Locked Lines:', this.vectorLine.lockedLines);
             }
+        } else {
+            this.isDrawingLine = false;
         }
     }
-    
+
     private onPointerUp() {
         if (this.isGemClicked && this.selectedGem) {
             let endX, endY;
@@ -185,7 +178,7 @@ export class GameScene extends Phaser.Scene {
         });
         this.vectorLine.clearLines();
     }
-    
+
     private clearGemsInsideTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
         const [line1, line2, line3] = lines;
     
