@@ -12,8 +12,8 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
     // Properties
     public isDrawing: boolean;
     public isLocked: boolean;
-    public startPoint: Phaser.Geom.Point;
-    public lockedLines: { 
+    public startPoint: { xCord: number, yCord: number } = { xCord: 0, yCord: 0 };
+    public lines: { 
         x1: number, y1: number, 
         x2: number, y2: number 
     }[] = [];
@@ -24,7 +24,6 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         super(scene, { lineStyle: { width: 4, color: 0xffffff } });
         scene.add.existing(this);
 
-        this.startPoint = new Phaser.Geom.Point();
         this.isDrawing = false;
         this.isLocked = false;
     }
@@ -33,25 +32,25 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
     public startDrawing(xCord: number, yCord: number) {
         this.isDrawing = true;
         this.isLocked = false;
-        this.startPoint.setTo(xCord, yCord);
+        this.startPoint = { xCord, yCord };
     }
 
     // Lock the line
     public lockLine(xCord: number, yCord: number) {
         this.isLocked = true;
-        this.lockedLines.push({
-            x1: this.startPoint.x,
-            y1: this.startPoint.y,
+        this.lines.push({
+            x1: this.startPoint.xCord,
+            y1: this.startPoint.yCord,
             x2: xCord,
             y2: yCord
         });
-        this.startPoint.setTo(xCord, yCord);
     }
 
     public stopDrawing() {
         if (this.line) {
             this.line.destroy();
             this.line = null;
+            this.isLocked = false;
         }
     }
 
@@ -61,7 +60,14 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
 
     // Update the line
     public onPointerMove(pointer: Phaser.Input.Pointer) {
-        this.update(pointer);
+        if (!this.isLocked) {
+            const endPoint = { x: pointer.x, y: pointer.y };
+            this.lines.push({
+                x1: this.startPoint.xCord,
+                y1: this.startPoint.yCord,
+                x2: endPoint.x,
+                y2: endPoint.y });
+        }
     }
 
     // Finish drawing the line
@@ -72,18 +78,18 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
 
             // Draw the locked lines
             for (let counter = 0;
-                counter < this.lockedLines.length;
+                counter < this.lines.length;
                 counter++
             ) {
-                const line = this.lockedLines[counter];
+                const line = this.lines[counter];
                 this.lineBetween(line.x1, line.y1, line.x2, line.y2);
             }
 
             // Draw the current line
             let endX, endY;
             if (this.isLocked) {
-                endX = this.startPoint.x;
-                endY = this.startPoint.y;
+                endX = this.startPoint.xCord;
+                endY = this.startPoint.yCord;
             } else {
                 endX = pointer.x;
                 endY = pointer.y;
@@ -91,8 +97,8 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
 
             // Draw the line between the start and end points
             this.lineBetween(
-                this.startPoint.x,
-                this.startPoint.y,
+                this.startPoint.xCord,
+                this.startPoint.yCord,
                 endX,
                 endY
             );
@@ -103,7 +109,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
     public clearLines() {
         this.isDrawing = false;
         this.isLocked = false;
-        this.lockedLines = [];
+        this.lines = [];
         super.clear();
     }
 }
