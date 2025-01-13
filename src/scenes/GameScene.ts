@@ -149,6 +149,7 @@ export class GameScene extends Phaser.Scene {
             }
             this.isGemClicked = false;
             this.selectedGem = null;
+            this.vectorLine.clearLines();
         }
     }
     
@@ -159,11 +160,18 @@ export class GameScene extends Phaser.Scene {
     private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         if (lines.length !== 3) return false;
         const [line1, line2, line3] = lines;
-        return (
+        const isTriangle = (
             line1.x1 === line3.x2 && line1.y1 === line3.y2 &&
             line2.x1 === line1.x2 && line2.y1 === line1.y2 &&
             line3.x1 === line2.x2 && line3.y1 === line2.y2
         );
+    
+        if (isTriangle) {
+            this.clearGemsAndLines(lines);
+            this.clearGemsInsideTriangle(lines);
+        }
+    
+        return isTriangle;
     }
     
     private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
