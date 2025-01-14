@@ -17,6 +17,7 @@ export class GameScene extends Phaser.Scene {
     private gems: Phaser.GameObjects.Image[] = [];
     private isDrawingLine: boolean = false;
     private numGemsToSpawn: number = 6;
+    private originalLineColor: number = 0xffffff;
 
     // Constructor Method
     constructor() {
@@ -112,10 +113,10 @@ export class GameScene extends Phaser.Scene {
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.isDrawingLine = true;
             this.vectorLine.onPointerMove(this.input.activePointer);
-
+    
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
-
+    
             for (let i = 0; i < this.gems.length; i++) {
                 const gem = this.gems[i];
                 if (gem.getBounds().contains(pointer.x, pointer.y) && gem !== this.selectedGem) {
@@ -123,17 +124,22 @@ export class GameScene extends Phaser.Scene {
                     break;
                 }
             }
-
+    
             // If there is an overlapping gem
-            // Lock the line and start drawing a new line on the overlapping gem
+            // Check if the gem types match
             if (overlappingGem) {
-                this.vectorLine.lockLine(overlappingGem.x, overlappingGem.y);
-                this.isGemClicked = true;
-                this.selectedGem = overlappingGem;
-                this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
-
-                // Debugging: Log the locked lines
-                console.log('Locked Lines:', this.vectorLine.lockedLines);
+                if (overlappingGem.texture.key === this.selectedGem.texture.key) {
+                    this.vectorLine.lockLine(overlappingGem.x, overlappingGem.y);
+                    this.isGemClicked = true;
+                    this.selectedGem = overlappingGem;
+                    this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
+    
+                    // Debugging: Log the locked lines
+                    console.log('Locked Lines:', this.vectorLine.lockedLines);
+                } else {
+                    // Change the line color to red
+                    this.vectorLine.lineStyle(4, 0xff0000);
+                }
             }
         } else {
             this.isDrawingLine = false;
@@ -174,6 +180,8 @@ export class GameScene extends Phaser.Scene {
             this.isGemClicked = false;
             this.selectedGem = null;
             this.vectorLine.clearLines();
+            // Reset the line color to white
+            this.vectorLine.lineStyle(4, this.originalLineColor);
         }
     }
 
