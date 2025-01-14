@@ -47,9 +47,6 @@ export class GameScene extends Phaser.Scene {
 
         // Show the get ready image
         this.showGetReady();
-
-        // Spawn the gems
-        this.spawnGems();
     
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);

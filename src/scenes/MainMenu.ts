@@ -36,7 +36,7 @@ export class MainMenu extends Scene
         this.add.image(960, 540, 'mainMenu-bg');
 
         // Create the Play Button GameObject
-        const playButton = this.add.image(1000, 840, 'play-button').setInteractive();
+        const playButton = this.add.image(1500, 840, 'play-button').setInteractive();
 
         // Set the Play Button to direct to the Game Scene
         playButton.on('pointerdown', () => {
@@ -44,7 +44,7 @@ export class MainMenu extends Scene
         });
 
         // Create the Back Button GameObject
-        const backButton = this.add.image(400, 840, 'back-button').setInteractive();
+        const backButton = this.add.image(800, 840, 'back-button').setInteractive();
         backButton.setScale(0.5);
 
         // Set the Back Button to direct to the Main Menu Scene
