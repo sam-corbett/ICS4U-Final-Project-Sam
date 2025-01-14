@@ -60,7 +60,6 @@ export class GameScene extends Phaser.Scene {
         const getReadyImage = this.add.image(1160, 540, 'getReady');
         this.time.delayedCall(2500, () => {
             getReadyImage.destroy();
-            this.spawnGems();
         });
     }
 
@@ -70,8 +69,6 @@ export class GameScene extends Phaser.Scene {
         wellDoneImage.setScale(2);
         this.time.delayedCall(2500, () => {
             wellDoneImage.destroy();
-            this.showGetReady();
-            this.numGemsToSpawn++;
         });
     }
 
@@ -98,7 +95,7 @@ export class GameScene extends Phaser.Scene {
             let xCord, yCord, gem, overlap;
     
             do {
-                xCord = Phaser.Math.Between(500, 1900);
+                xCord = Phaser.Math.Between(400, 1900);
                 yCord = Phaser.Math.Between(20, 1060);
                 overlap = false;
     
@@ -308,7 +305,10 @@ export class GameScene extends Phaser.Scene {
         // Check if all gems are cleared and respawn if necessary
         private checkAndRespawnGems() {
             if (this.gems.length === 0) {
+                this.numGemsToSpawn++;
                 this.showWellDone();
+                this.showGetReady();
+                this.spawnGems();
             }
         }
 }
