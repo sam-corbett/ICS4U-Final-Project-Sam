@@ -146,6 +146,11 @@ export class GameScene extends Phaser.Scene {
         if (this.isDrawingLine) {
             this.isDrawingLine = false;
             const connectedGems = this.vectorLine.getConnectedGems();
+    
+            if (connectedGems.length === 0) {
+                return;
+            }
+    
             const firstGemType = connectedGems[0].getData('type');
             let validConnection = true;
     
@@ -165,8 +170,8 @@ export class GameScene extends Phaser.Scene {
                     this.vectorLine.clear();
                 } else {
                     this.vectorLine.setOpacity(1); // Reset opacity
-                    for (let counter = 0; counter < connectedGems.length; counter++) {
-                        connectedGems[counter].destroy();
+                    for (let i = 0; i < connectedGems.length; i++) {
+                        connectedGems[i].destroy();
                     }
                     this.gems = this.gems.filter(g => !connectedGems.includes(g));
                     this.checkAndRespawnGems();
