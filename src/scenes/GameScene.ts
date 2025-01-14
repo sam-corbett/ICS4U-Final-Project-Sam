@@ -70,6 +70,7 @@ export class GameScene extends Phaser.Scene {
         wellDoneImage.setScale(2);
         this.time.delayedCall(2500, () => {
             wellDoneImage.destroy();
+            this.showGetReady();
         });
     }
 
@@ -308,7 +309,6 @@ export class GameScene extends Phaser.Scene {
             if (this.gems.length === 0) {
                 this.numGemsToSpawn++;
                 this.showWellDone();
-                this.showGetReady();
             }
         }
 }
