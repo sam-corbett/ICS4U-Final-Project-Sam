@@ -29,7 +29,6 @@ export class GameScene extends Phaser.Scene {
         this.load.image('sidebar', 'assets/sidebar.png');
 
         // Load the images with text
-        this.load.image('getReady', 'assets/getReady.png');
         this.load.image('wellDone', 'assets/wellDone.png');
 
         // Load the gems
@@ -44,9 +43,6 @@ export class GameScene extends Phaser.Scene {
     create() {
         // Create the vector line
         this.vectorLine = new vectorLine(this);
-
-        // Show the get ready image
-        this.showGetReady();
     
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);
@@ -55,14 +51,6 @@ export class GameScene extends Phaser.Scene {
         this.add.image(200, 540, 'sidebar');
     }
 
-    // Show the image saying "get ready"
-    private showGetReady() {
-        const getReadyImage = this.add.image(1160, 540, 'getReady');
-        this.time.delayedCall(2500, () => {
-            getReadyImage.destroy();
-            this.spawnGems();
-        });
-    }
 
     // Show the image saying "well done"
     private showWellDone() {
@@ -70,7 +58,7 @@ export class GameScene extends Phaser.Scene {
         wellDoneImage.setScale(2);
         this.time.delayedCall(2500, () => {
             wellDoneImage.destroy();
-            this.showGetReady();
+            this.spawnGems();
         });
     }
 
