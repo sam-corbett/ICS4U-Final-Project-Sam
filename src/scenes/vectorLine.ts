@@ -18,7 +18,6 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         x2: number, y2: number 
     }[] = [];
     private line: Phaser.GameObjects.Line | null = null;
-    private connectedGems: Phaser.GameObjects.Image[];
 
     // Constructor
     constructor(scene: Phaser.Scene) {
@@ -28,7 +27,6 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         this.startPoint = new Phaser.Geom.Point();
         this.isDrawing = false;
         this.isLocked = false;
-        this.connectedGems = [];
     }
 
     // Start drawing the line
@@ -50,7 +48,6 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         this.startPoint.setTo(xCord, yCord);
     }
 
-    // Stop drawing the line
     public stopDrawing() {
         if (this.line) {
             this.line.destroy();
@@ -58,24 +55,8 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         }
     }
 
-    // Get the line
-    public getLines() {
+    getLines() {
         return this.line;
-    }
-
-    // Set the line opacity
-    public setOpacity(opacity: number) {
-        this.alpha = opacity;
-    }
-
-    // Get the connected gems
-    public getConnectedGems() {
-        return this.connectedGems;
-    }
-
-    // Add a connected gem
-    public addConnectedGem(gem: Phaser.GameObjects.Image) {
-        this.connectedGems.push(gem);
     }
 
     // Update the line

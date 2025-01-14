@@ -84,7 +84,6 @@ export class GameScene extends Phaser.Scene {
             gem = this.add.image(xCord, yCord, gemType);
             gem.setScale(0.07);
             gem.setInteractive();
-            gem.setData('type', gemType); // Store gem type
             this.gems.push(gem);
     
             gem.on('pointerdown', () => {
@@ -94,7 +93,6 @@ export class GameScene extends Phaser.Scene {
                     if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
                         this.vectorLine.startDrawing(gem.x, gem.y);
-                        this.vectorLine.addConnectedGem(gem);
                     } else {
                         if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
                             this.selectedGem.destroy();
@@ -144,42 +142,6 @@ export class GameScene extends Phaser.Scene {
 
     // Pointer Up Method
     private onPointerUp() {
-        if (this.isDrawingLine) {
-            this.isDrawingLine = false;
-            const connectedGems = this.vectorLine.getConnectedGems();
-    
-            if (connectedGems.length === 0) {
-                return;
-            }
-    
-            const firstGemType = connectedGems[0].getData('type');
-            let validConnection = true;
-    
-            for (let i = 1; i < connectedGems.length; i++) {
-                if (connectedGems[i].getData('type') !== firstGemType) {
-                    validConnection = false;
-                    break;
-                }
-            }
-    
-            if (!validConnection) {
-                this.vectorLine.setOpacity(0.5); // Change opacity to indicate mistake
-                this.vectorLine.clear();
-            } else {
-                if (connectedGems.length >= 3 && (connectedGems[0].x !== connectedGems[connectedGems.length - 1].x || connectedGems[0].y !== connectedGems[connectedGems.length - 1].y)) {
-                    this.vectorLine.setOpacity(0.5); // Change opacity to indicate mistake
-                    this.vectorLine.clear();
-                } else {
-                    this.vectorLine.setOpacity(1); // Reset opacity
-                    for (let i = 0; i < connectedGems.length; i++) {
-                        connectedGems[i].destroy();
-                    }
-                    this.gems = this.gems.filter(g => !connectedGems.includes(g));
-                    this.checkAndRespawnGems();
-                }
-            }
-        }
-
         if (this.isGemClicked && this.selectedGem) {
             let endX, endY;
             if (this.vectorLine.isLocked) {
