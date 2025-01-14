@@ -26,6 +26,7 @@ export class GameScene extends Phaser.Scene {
     // Preload Assets
     preload() {
         this.load.image('gem1', 'assets/gem1.png');
+        this.load.image('gem2', 'assets/gem2.png');
     }
 
     // Create Method
@@ -45,6 +46,7 @@ export class GameScene extends Phaser.Scene {
     
         for (let counter1 = 0; counter1 < this.numGemsToSpawn; counter1++) {
             let xCord, yCord, gem, overlap;
+            const gemType = Phaser.Math.Between(1, 2) === 1 ? 'gem1' : 'gem2';
     
             do {
                 xCord = Phaser.Math.Between(400, 1900);
@@ -61,7 +63,8 @@ export class GameScene extends Phaser.Scene {
                 }
             } while (overlap);
     
-            gem = this.add.image(xCord, yCord, 'gem1');
+            gem = this.add.image(xCord, yCord, gemType);
+            gem.setData('type', gemType);
             gem.setScale(0.07);
             gem.setInteractive();
             this.gems.push(gem);
@@ -131,9 +134,9 @@ export class GameScene extends Phaser.Scene {
                 endX = this.input.activePointer.x;
                 endY = this.input.activePointer.y;
             }
-    
+
             const lines = this.vectorLine.lockedLines;
-    
+
             if (!this.selectedGem.getBounds().contains(endX, endY)) {
                 this.vectorLine.stopDrawing();
                 this.vectorLine.clearLines();
@@ -141,7 +144,7 @@ export class GameScene extends Phaser.Scene {
                 if (lines.length === 0) {
                     this.selectedGem.destroy();
                     this.gems = this.gems.filter(gem => gem !== this.selectedGem);
-                    this.checkAndRespawnGems();
+                    this.checkAndRespawnGems(); // Ensure gems are respawned if necessary
                 } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
                     this.clearGemsInsideTriangle(lines);
@@ -157,25 +160,25 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
+    private isSameType(gem1: Phaser.GameObjects.Image, gem2: Phaser.GameObjects.Image): boolean {
+        return gem1.getData('type') === gem2.getData('type');
+    }
+
     private isLine(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
-        return lines.length === 1;
+        if (lines.length !== 1) return false;
+        const [line] = lines;
+        const gem1 = this.gems.find(gem => gem.x === line.x1 && gem.y === line.y1);
+        const gem2 = this.gems.find(gem => gem.x === line.x2 && gem.y === line.y2);
+        return !!gem1 && !!gem2 && this.isSameType(gem1, gem2);
     }
     
     private isTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): boolean {
         if (lines.length !== 3) return false;
         const [line1, line2, line3] = lines;
-        const isTriangle = (
-            line1.x1 === line3.x2 && line1.y1 === line3.y2 &&
-            line2.x1 === line1.x2 && line2.y1 === line1.y2 &&
-            line3.x1 === line2.x2 && line3.y1 === line2.y2
-        );
-    
-        if (isTriangle) {
-            this.clearGemsAndLines(lines);
-            this.clearGemsInsideTriangle(lines);
-        }
-    
-        return isTriangle;
+        const gem1 = this.gems.find(gem => gem.x === line1.x1 && gem.y === line1.y1);
+        const gem2 = this.gems.find(gem => gem.x === line2.x1 && gem.y === line2.y1);
+        const gem3 = this.gems.find(gem => gem.x === line3.x1 && gem.y === line3.y1);
+        return !!gem1 && !!gem2 && !!gem3 && this.isSameType(gem1, gem2) && this.isSameType(gem2, gem3);
     }
 
     private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
