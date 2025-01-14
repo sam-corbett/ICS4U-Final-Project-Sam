@@ -94,6 +94,7 @@ export class GameScene extends Phaser.Scene {
                     if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
                         this.vectorLine.startDrawing(gem.x, gem.y);
+                        this.vectorLine.addConnectedGem(gem);
                     } else {
                         if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
                             this.selectedGem.destroy();
@@ -178,6 +179,7 @@ export class GameScene extends Phaser.Scene {
                 }
             }
         }
+
         if (this.isGemClicked && this.selectedGem) {
             let endX, endY;
             if (this.vectorLine.isLocked) {

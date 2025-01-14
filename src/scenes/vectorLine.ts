@@ -50,6 +50,7 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         this.startPoint.setTo(xCord, yCord);
     }
 
+    // Stop drawing the line
     public stopDrawing() {
         if (this.line) {
             this.line.destroy();
@@ -57,19 +58,23 @@ export class vectorLine extends Phaser.GameObjects.Graphics {
         }
     }
 
+    // Get the line
     public getLines() {
         return this.line;
     }
 
-    setOpacity(opacity: number) {
+    // Set the line opacity
+    public setOpacity(opacity: number) {
         this.alpha = opacity;
     }
 
-    getConnectedGems() {
+    // Get the connected gems
+    public getConnectedGems() {
         return this.connectedGems;
     }
 
-    addConnectedGem(gem: Phaser.GameObjects.Image) {
+    // Add a connected gem
+    public addConnectedGem(gem: Phaser.GameObjects.Image) {
         this.connectedGems.push(gem);
     }
 
