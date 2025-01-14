@@ -28,6 +28,8 @@ export class GameScene extends Phaser.Scene {
         this.load.image('gem1', 'assets/gem1.png');
         this.load.image('gem2', 'assets/gem2.png');
         this.load.image('gem3', 'assets/gem3.png');
+        this.load.image('gem4', 'assets/gem4.png');
+        this.load.image('gem5', 'assets/gem5.png');
     }
 
     // Create Method
@@ -43,13 +45,19 @@ export class GameScene extends Phaser.Scene {
 
     // Spawn Gems Method
     private spawnGems() {
-        const gemSize = 720 * 0.07; // estimated size of the gem
-        const totalGemsToSpawn = Math.min(this.numGemsToSpawn, 45); // limit the total number of gems to 45
-        const gemTypes = ['gem1', 'gem2', 'gem3'];
+        // estimated size of the gem
+        const gemSize = 720 * 0.07;
+        // total number of gems to spawn
+        const totalGemsToSpawn = Math.min(this.numGemsToSpawn, 50);
+        const gemTypes = ['gem1', 'gem2', 'gem3', 'gem4', 'gem5'];
         let gemTypeDistribution;
     
-        if (this.numGemsToSpawn <= 5) {
+        if (this.numGemsToSpawn <= 10) {
             gemTypeDistribution = ['gem1', 'gem2'];
+        } else if (this.numGemsToSpawn <= 20) {
+            gemTypeDistribution = ['gem1', 'gem2', 'gem3'];
+        } else if (this.numGemsToSpawn <= 30) {
+            gemTypeDistribution = ['gem1', 'gem2', 'gem3', 'gem4'];
         } else {
             gemTypeDistribution = gemTypes;
         }
@@ -76,6 +84,7 @@ export class GameScene extends Phaser.Scene {
             gem = this.add.image(xCord, yCord, gemType);
             gem.setScale(0.07);
             gem.setInteractive();
+            gem.setData('type', gemType); // Store gem type
             this.gems.push(gem);
     
             gem.on('pointerdown', () => {
@@ -134,6 +143,36 @@ export class GameScene extends Phaser.Scene {
 
     // Pointer Up Method
     private onPointerUp() {
+        if (this.isDrawingLine) {
+            this.isDrawingLine = false;
+            const connectedGems = this.vectorLine.getConnectedGems();
+            const firstGemType = connectedGems[0].getData('type');
+            let validConnection = true;
+    
+            for (let i = 1; i < connectedGems.length; i++) {
+                if (connectedGems[i].getData('type') !== firstGemType) {
+                    validConnection = false;
+                    break;
+                }
+            }
+    
+            if (!validConnection) {
+                this.vectorLine.setOpacity(0.5); // Change opacity to indicate mistake
+                this.vectorLine.clear();
+            } else {
+                if (connectedGems.length >= 3 && (connectedGems[0].x !== connectedGems[connectedGems.length - 1].x || connectedGems[0].y !== connectedGems[connectedGems.length - 1].y)) {
+                    this.vectorLine.setOpacity(0.5); // Change opacity to indicate mistake
+                    this.vectorLine.clear();
+                } else {
+                    this.vectorLine.setOpacity(1); // Reset opacity
+                    for (let counter = 0; counter < connectedGems.length; counter++) {
+                        connectedGems[counter].destroy();
+                    }
+                    this.gems = this.gems.filter(g => !connectedGems.includes(g));
+                    this.checkAndRespawnGems();
+                }
+            }
+        }
         if (this.isGemClicked && this.selectedGem) {
             let endX, endY;
             if (this.vectorLine.isLocked) {
