@@ -25,6 +25,10 @@ export class GameScene extends Phaser.Scene {
 
     // Preload Assets
     preload() {
+        // Load the sidebar
+        this.load.image('sidebar', 'assets/sidebar.png');
+
+        // Load the gems
         this.load.image('gem1', 'assets/gem1.png');
         this.load.image('gem2', 'assets/gem2.png');
         this.load.image('gem3', 'assets/gem3.png');
@@ -41,6 +45,9 @@ export class GameScene extends Phaser.Scene {
     
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);
+
+        // Add the sidebar
+        this.add.image(0, 540, 'sidebar');
     }
 
     // Spawn Gems Method
