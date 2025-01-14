@@ -43,6 +43,9 @@ export class GameScene extends Phaser.Scene {
     create() {
         // Create the vector line
         this.vectorLine = new vectorLine(this);
+
+        // Spawn the gems
+        this.spawnGems();
     
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);
@@ -58,7 +61,6 @@ export class GameScene extends Phaser.Scene {
         wellDoneImage.setScale(2);
         this.time.delayedCall(2500, () => {
             wellDoneImage.destroy();
-            this.spawnGems();
         });
     }
 
