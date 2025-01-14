@@ -26,6 +26,8 @@ export class GameScene extends Phaser.Scene {
     // Preload Assets
     preload() {
         this.load.image('gem1', 'assets/gem1.png');
+        this.load.image('gem2', 'assets/gem2.png');
+        this.load.image('gem3', 'assets/gem3.png');
     }
 
     // Create Method
@@ -42,8 +44,17 @@ export class GameScene extends Phaser.Scene {
     // Spawn Gems Method
     private spawnGems() {
         const gemSize = 720 * 0.07; // estimated size of the gem
+        const totalGemsToSpawn = Math.min(this.numGemsToSpawn, 45); // limit the total number of gems to 45
+        const gemTypes = ['gem1', 'gem2', 'gem3'];
+        let gemTypeDistribution;
     
-        for (let counter1 = 0; counter1 < this.numGemsToSpawn; counter1++) {
+        if (this.numGemsToSpawn <= 5) {
+            gemTypeDistribution = ['gem1', 'gem2'];
+        } else {
+            gemTypeDistribution = gemTypes;
+        }
+    
+        for (let counter1 = 0; counter1 < totalGemsToSpawn; counter1++) {
             let xCord, yCord, gem, overlap;
     
             do {
@@ -61,7 +72,8 @@ export class GameScene extends Phaser.Scene {
                 }
             } while (overlap);
     
-            gem = this.add.image(xCord, yCord, 'gem1');
+            const gemType = gemTypeDistribution[Math.floor(Math.random() * gemTypeDistribution.length)];
+            gem = this.add.image(xCord, yCord, gemType);
             gem.setScale(0.07);
             gem.setInteractive();
             this.gems.push(gem);
