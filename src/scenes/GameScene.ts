@@ -28,6 +28,10 @@ export class GameScene extends Phaser.Scene {
         // Load the sidebar
         this.load.image('sidebar', 'assets/sidebar.png');
 
+        // Load the images with text
+        this.load.image('getReady', 'assets/getReady.png');
+        this.load.image('wellDone', 'assets/wellDone.png');
+
         // Load the gems
         this.load.image('gem1', 'assets/gem1.png');
         this.load.image('gem2', 'assets/gem2.png');
@@ -40,6 +44,10 @@ export class GameScene extends Phaser.Scene {
     create() {
         // Create the vector line
         this.vectorLine = new vectorLine(this);
+
+        // Show the get ready image
+        this.showGetReady();
+
         // Spawn the gems
         this.spawnGems();
     
@@ -47,7 +55,26 @@ export class GameScene extends Phaser.Scene {
         this.input.on('pointerup', this.onPointerUp, this);
 
         // Add the sidebar
-        this.add.image(0, 540, 'sidebar');
+        this.add.image(200, 540, 'sidebar');
+    }
+
+    // Show the image saying "get ready"
+    private showGetReady() {
+        const getReadyImage = this.add.image(1160, 540, 'getReady');
+        this.time.delayedCall(2500, () => {
+            getReadyImage.destroy();
+            this.spawnGems();
+        });
+    }
+
+    // Show the image saying "well done"
+    private showWellDone() {
+        const wellDoneImage = this.add.image(1160, 540, 'wellDone');
+        wellDoneImage.setScale(2);
+        this.time.delayedCall(2500, () => {
+            wellDoneImage.destroy();
+            this.showGetReady();
+        });
     }
 
     // Spawn Gems Method
@@ -284,7 +311,7 @@ export class GameScene extends Phaser.Scene {
         private checkAndRespawnGems() {
             if (this.gems.length === 0) {
                 this.numGemsToSpawn++;
-                this.spawnGems();
+                this.showWellDone();
             }
         }
 }

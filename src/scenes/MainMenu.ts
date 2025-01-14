@@ -44,7 +44,8 @@ export class MainMenu extends Scene
         });
 
         // Create the Back Button GameObject
-        const backButton = this.add.image(100, 840, 'back-button').setInteractive();
+        const backButton = this.add.image(400, 840, 'back-button').setInteractive();
+        backButton.setScale(0.5);
 
         // Set the Back Button to direct to the Main Menu Scene
         backButton.on('pointerdown', () => {
