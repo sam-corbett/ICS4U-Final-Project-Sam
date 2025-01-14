@@ -60,6 +60,7 @@ export class GameScene extends Phaser.Scene {
         const getReadyImage = this.add.image(1160, 540, 'getReady');
         this.time.delayedCall(2500, () => {
             getReadyImage.destroy();
+            this.spawnGems();
         });
     }
 
@@ -308,7 +309,6 @@ export class GameScene extends Phaser.Scene {
                 this.numGemsToSpawn++;
                 this.showWellDone();
                 this.showGetReady();
-                this.spawnGems();
             }
         }
 }
