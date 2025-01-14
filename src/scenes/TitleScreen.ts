@@ -23,7 +23,7 @@ export class TitleScreen extends Scene
     // Preload Method
     preload () {
     // Load the title image
-        this.load.image('title-bg', 'assets/titleScreen-bg.png');
+        this.load.image('title-bg', 'assets/titleScreen-bg.jpg');
     // Load the JewelBondz Logo
         this.load.image('jewelbondz-logo', 'assets/jewelbondz-logo.png');
     // Load the Play Button
@@ -36,16 +36,16 @@ export class TitleScreen extends Scene
         this.add.image(960, 540, 'title-bg');
 
         // Create the Jewel Bondz Image GameObject
-        this.image = this.add.image(960, 640, 'jewelbondz-logo');
+        this.image = this.add.image(960, 540, 'jewelbondz-logo');
         this.image.setOrigin(0.5, 0.5);
 
         // Create the Start Button GameObject
-        const startButton = this.add.image(960, 440, 'start-button').setInteractive();
+        const startButton = this.add.image(960, 940, 'start-button').setInteractive();
         startButton.setScale(0.5);
 
         // Set the Start Button to direct to the mainMenu Scene
         startButton.on('pointerdown', () => {
-            this.scene.start('mainMenu');
+            this.scene.start('MainMenu');
         });
     }
 }
