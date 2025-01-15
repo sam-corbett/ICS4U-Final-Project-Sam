@@ -63,9 +63,10 @@ export class GameScene extends Phaser.Scene {
 
         // Add the score text
         this.scoreText = this.add.text(200, 50, `${this.score}`, {
-            fontSize: '32px',
+            fontSize: '40px',
             color: '#000',
-            fontFamily: 'Arial'
+            fontFamily: 'Arial',
+            align: 'center'
         });
     }
 
