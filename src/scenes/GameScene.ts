@@ -238,7 +238,7 @@ export class GameScene extends Phaser.Scene {
                     const clearedGemsInsideTriangle = this.clearGemsInsideTriangle(lines);
                     this.updateScore(3 * 300);
                     if (clearedGemsInsideTriangle > 0) {
-                        this.turnsText.setText(`${this.turns}`);
+                        this.turns += clearedGemsInsideTriangle;
                     } else {
                         this.turns -= 1;
                     }
