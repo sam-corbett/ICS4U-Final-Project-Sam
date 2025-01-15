@@ -17,10 +17,14 @@ export class GameScene extends Phaser.Scene {
     private gems: Phaser.GameObjects.Image[] = [];
     private isDrawingLine: boolean = false;
     private numGemsToSpawn: number = 6;
+
+    // Score, Rounds, and Turns
     private score: number = 0;
     private scoreText: Phaser.GameObjects.Text;
     private rounds: number = 1;
     private roundsText: Phaser.GameObjects.Text;
+    private turns: number = 15;
+    private turnsText: Phaser.GameObjects.Text;
 
     // Constructor Method
     constructor() {
@@ -64,7 +68,7 @@ export class GameScene extends Phaser.Scene {
         this.add.image(200, 540, 'sidebar');
 
         // Add the score text
-        this.scoreText = this.add.text(100, 250, `${this.score}`, {
+        this.scoreText = this.add.text(180, 250, `${this.score}`, {
             fontSize: '40px',
             color: '#000',
             fontFamily: 'Arial',
@@ -72,7 +76,15 @@ export class GameScene extends Phaser.Scene {
         });
 
         // Add the rounds text
-        this.roundsText = this.add.text(180, 450, `${this.rounds}`, {
+        this.roundsText = this.add.text(180, 520, `${this.rounds}`, {
+            fontSize: '40px',
+            color: '#000',
+            fontFamily: 'Arial',
+            align: 'center'
+        });
+
+        // Add the turns text
+        this.turnsText = this.add.text(180, 790, `${this.turns}`, {
             fontSize: '40px',
             color: '#000',
             fontFamily: 'Arial',
@@ -217,17 +229,20 @@ export class GameScene extends Phaser.Scene {
                     this.selectedGem.destroy();
                     this.gems = this.gems.filter(gem => gem !== this.selectedGem);
                     this.updateScore(1 * 100);
+                    this.turns--;
                     this.checkAndRespawnGems();
                 // If the triangle is formed, clear the gems and lines
                 // and clear the gems if they are inside that triangle
                 } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
                     this.updateScore(3 * 300);
+                    this.turns--;
                 // If the line is formed, clear the gems and lines
                 // Else clear the lines
                 } else if (this.isLine(lines)) {
                     const clearedGems = this.clearGemsAndLines(lines);
                     this.updateScore(clearedGems * 200);
+                    this.turns--;
                 } else {
                     this.vectorLine.clearLines();
                 }
@@ -241,6 +256,7 @@ export class GameScene extends Phaser.Scene {
     private updateScore(points: number) {
         this.score += points;
         this.scoreText.setText(`${this.score}`);
+        this.turnsText.setText(`${this.turns}`);
     }
 
     /**
