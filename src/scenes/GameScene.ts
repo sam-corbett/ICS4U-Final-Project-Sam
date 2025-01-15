@@ -17,6 +17,10 @@ export class GameScene extends Phaser.Scene {
     private gems: Phaser.GameObjects.Image[] = [];
     private isDrawingLine: boolean = false;
     private numGemsToSpawn: number = 6;
+    private score: number = 0;
+    private scoreText: Phaser.GameObjects.Text;
+    private rounds: number = 1;
+    private roundsText: Phaser.GameObjects.Text;
 
     // Constructor Method
     constructor() {
@@ -25,6 +29,16 @@ export class GameScene extends Phaser.Scene {
 
     // Preload Assets
     preload() {
+        // Load the sidebar
+        this.load.image('sidebar', 'assets/sidebar.png');
+
+        // Load the background for the game
+        this.load.image('gameScene-bg', 'assets/gameScene-bg.jpg');
+
+        // Load the images with text
+        this.load.image('wellDone', 'assets/wellDone.png');
+
+        // Load the gems
         this.load.image('gem1', 'assets/gem1.png');
         this.load.image('gem2', 'assets/gem2.png');
         this.load.image('gem3', 'assets/gem3.png');
@@ -34,13 +48,47 @@ export class GameScene extends Phaser.Scene {
 
     // Create Method
     create() {
+        // Set the background image
+        this.add.image(960, 540, 'gameScene-bg');
+
         // Create the vector line
         this.vectorLine = new vectorLine(this);
+
         // Spawn the gems
         this.spawnGems();
     
         // Add event listener for pointerup
         this.input.on('pointerup', this.onPointerUp, this);
+
+        // Add the sidebar
+        this.add.image(200, 540, 'sidebar');
+
+        // Add the score text
+        this.scoreText = this.add.text(100, 250, `${this.score}`, {
+            fontSize: '40px',
+            color: '#000',
+            fontFamily: 'Arial',
+            align: 'center'
+        });
+
+        // Add the rounds text
+        this.roundsText = this.add.text(180, 450, `${this.rounds}`, {
+            fontSize: '40px',
+            color: '#000',
+            fontFamily: 'Arial',
+            align: 'center'
+        });
+    }
+
+
+    // Show the image saying "well done"
+    private showWellDone() {
+        const wellDoneImage = this.add.image(1160, 540, 'wellDone');
+        wellDoneImage.setScale(2);
+        wellDoneImage.setDepth(1);
+        this.time.delayedCall(2500, () => {
+            wellDoneImage.destroy();
+        });
     }
 
     // Spawn Gems Method
@@ -84,6 +132,7 @@ export class GameScene extends Phaser.Scene {
             gem = this.add.image(xCord, yCord, gemType);
             gem.setScale(0.07);
             gem.setInteractive();
+            gem.setDepth(0)
             this.gems.push(gem);
     
             gem.on('pointerdown', () => {
@@ -138,6 +187,9 @@ export class GameScene extends Phaser.Scene {
         } else {
             this.isDrawingLine = false;
         }
+
+        // Update the score text
+        this.scoreText.setText(`${this.score}`);
     }
 
     // Pointer Up Method
@@ -153,7 +205,7 @@ export class GameScene extends Phaser.Scene {
             }
     
             const lines = this.vectorLine.lockedLines;
-    
+
             // If the end point is not inside the selected gem
             // Clear the lines
             if (!this.selectedGem.getBounds().contains(endX, endY)) {
@@ -164,16 +216,18 @@ export class GameScene extends Phaser.Scene {
                 if (lines.length === 0) {
                     this.selectedGem.destroy();
                     this.gems = this.gems.filter(gem => gem !== this.selectedGem);
+                    this.updateScore(1 * 100);
                     this.checkAndRespawnGems();
                 // If the triangle is formed, clear the gems and lines
                 // and clear the gems if they are inside that triangle
                 } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
-                    this.clearGemsInsideTriangle(lines);
+                    this.updateScore(3 * 300);
                 // If the line is formed, clear the gems and lines
                 // Else clear the lines
                 } else if (this.isLine(lines)) {
-                    this.clearGemsAndLines(lines);
+                    const clearedGems = this.clearGemsAndLines(lines);
+                    this.updateScore(clearedGems * 200);
                 } else {
                     this.vectorLine.clearLines();
                 }
@@ -182,6 +236,11 @@ export class GameScene extends Phaser.Scene {
             this.selectedGem = null;
             this.vectorLine.clearLines();
         }
+    }
+
+    private updateScore(points: number) {
+        this.score += points;
+        this.scoreText.setText(`${this.score}`);
     }
 
     /**
@@ -219,32 +278,34 @@ export class GameScene extends Phaser.Scene {
      * clearGemsAndLines method
      * @param lines - the lines to clear the gems and lines
      */
-    private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
+    private clearGemsAndLines(lines: { x1: number, y1: number, x2: number, y2: number }[]): number {
+        let clearedGemsCount = 0;
         this.gems = this.gems.filter(gem => {
             const isGemInLine = lines.some(line => 
                 (gem.x === line.x1 && gem.y === line.y1) || (gem.x === line.x2 && gem.y === line.y2)
             );
             if (isGemInLine) {
                 gem.destroy();
+                clearedGemsCount++;
             }
             return !isGemInLine;
         });
         this.vectorLine.clearLines();
         this.checkAndRespawnGems();
+        return clearedGemsCount;
     }
 
     /**
      * clearGemsInsideTriangle method
      * @param lines - the lines to clear the gems inside the triangle
      */
-    private clearGemsInsideTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]) {
+    private clearGemsInsideTriangle(lines: { x1: number, y1: number, x2: number, y2: number }[]): number {
         const [line1, line2, line3] = lines;
-    
         const area = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number) => {
             return Math.abs((x1*(y2-y3) + x2*(y3-y1) + x3*(y1-y2)) / 2.0);
         };
-    
         const triangleArea = area(line1.x1, line1.y1, line2.x1, line2.y1, line3.x1, line3.y1);
+        let insideGemsCount = 0;
     
         this.gems = this.gems.filter(gem => {
             const gemArea = area(gem.x, gem.y, line1.x1, line1.y1, line2.x1, line2.y1) +
@@ -253,6 +314,7 @@ export class GameScene extends Phaser.Scene {
     
             if (gemArea === triangleArea) {
                 gem.destroy();
+                insideGemsCount++;
                 return false;
             }
             return true;
@@ -271,13 +333,17 @@ export class GameScene extends Phaser.Scene {
         this.gems = this.gems.filter(gem => !triangleGems.includes(gem));
     
         this.checkAndRespawnGems();
+        return insideGemsCount;
     }
 
         // Check if all gems are cleared and respawn if necessary
         private checkAndRespawnGems() {
             if (this.gems.length === 0) {
                 this.numGemsToSpawn++;
+                this.showWellDone();
                 this.spawnGems();
+                this.rounds++;
+                this.roundsText.setText(`${this.rounds}`);
             }
         }
 }

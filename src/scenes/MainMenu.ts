@@ -2,7 +2,7 @@
  * Main Menu Scene
  *
  * By: Sam Corbett
- * Version: 1.0
+ * Version: 1.5
  * Since: 2024/12/13
  */
 
@@ -26,6 +26,8 @@ export class MainMenu extends Scene
         this.load.image('mainMenu-bg', 'assets/mainMenu-bg.png');
     // Load the play button
         this.load.image('play-button', 'assets/playButton.png');
+    // Load the back button
+        this.load.image('back-button', 'assets/backButton.png');
     }
     
     // Create Method
@@ -34,11 +36,21 @@ export class MainMenu extends Scene
         this.add.image(960, 540, 'mainMenu-bg');
 
         // Create the Play Button GameObject
-        const playButton = this.add.image(960, 440, 'play-button').setInteractive();
+        const playButton = this.add.image(1200, 840, 'play-button').setInteractive();
+        playButton.setScale(1.5);
 
         // Set the Play Button to direct to the Game Scene
         playButton.on('pointerdown', () => {
             this.scene.start('GameScene');
+        });
+
+        // Create the Back Button GameObject
+        const backButton = this.add.image(800, 840, 'back-button').setInteractive();
+        backButton.setScale(0.5);
+
+        // Set the Back Button to direct to the Title Scene
+        backButton.on('pointerdown', () => {
+            this.scene.start('TitleScreen');
         });
     }
 }
