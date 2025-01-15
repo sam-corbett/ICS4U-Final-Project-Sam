@@ -354,6 +354,12 @@ export class GameScene extends Phaser.Scene {
         this.gems = this.gems.filter(gem => !triangleGems.includes(gem));
 
         console.log('Inside Gems:', insideGemsCount);
+
+        // Increment turns if there are gems inside the triangle
+        if (insideGemsCount > 0) {
+            this.turns++;
+            this.turnsText.setText(`${this.turns}`);
+        }
     
         this.checkAndRespawnGems();
         return insideGemsCount;
