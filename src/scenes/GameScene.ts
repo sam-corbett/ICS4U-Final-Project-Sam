@@ -46,7 +46,7 @@ export class GameScene extends Phaser.Scene {
     create() {
         // Set the background image
         this.add.image(960, 540, 'gameScene-bg');
-        
+
         // Create the vector line
         this.vectorLine = new vectorLine(this);
 
@@ -65,6 +65,7 @@ export class GameScene extends Phaser.Scene {
     private showWellDone() {
         const wellDoneImage = this.add.image(1160, 540, 'wellDone');
         wellDoneImage.setScale(2);
+        wellDoneImage.setDepth(1);
         this.time.delayedCall(2500, () => {
             wellDoneImage.destroy();
         });
@@ -111,6 +112,7 @@ export class GameScene extends Phaser.Scene {
             gem = this.add.image(xCord, yCord, gemType);
             gem.setScale(0.07);
             gem.setInteractive();
+            gem.setDepth(0)
             this.gems.push(gem);
     
             gem.on('pointerdown', () => {
