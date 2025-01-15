@@ -19,6 +19,8 @@ export class GameScene extends Phaser.Scene {
     private numGemsToSpawn: number = 6;
     private score: number = 0;
     private scoreText: Phaser.GameObjects.Text;
+    private rounds: number = 1;
+    private roundsText: Phaser.GameObjects.Text;
 
     // Constructor Method
     constructor() {
@@ -62,7 +64,15 @@ export class GameScene extends Phaser.Scene {
         this.add.image(200, 540, 'sidebar');
 
         // Add the score text
-        this.scoreText = this.add.text(200, 50, `${this.score}`, {
+        this.scoreText = this.add.text(100, 250, `${this.score}`, {
+            fontSize: '40px',
+            color: '#000',
+            fontFamily: 'Arial',
+            align: 'center'
+        });
+
+        // Add the rounds text
+        this.roundsText = this.add.text(180, 450, `${this.rounds}`, {
             fontSize: '40px',
             color: '#000',
             fontFamily: 'Arial',
@@ -212,12 +222,7 @@ export class GameScene extends Phaser.Scene {
                 // and clear the gems if they are inside that triangle
                 } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
-                    const insideGems = this.clearGemsInsideTriangle(lines);
-                    if (insideGems > 0) {
-                        this.updateScore(1000);
-                    } else {
-                        this.updateScore(3 * 300);
-                    }
+                    this.updateScore(3 * 300);
                 // If the line is formed, clear the gems and lines
                 // Else clear the lines
                 } else if (this.isLine(lines)) {
@@ -337,6 +342,8 @@ export class GameScene extends Phaser.Scene {
                 this.numGemsToSpawn++;
                 this.showWellDone();
                 this.spawnGems();
+                this.rounds++;
+                this.roundsText.setText(`${this.rounds}`);
             }
         }
 }
