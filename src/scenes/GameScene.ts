@@ -28,6 +28,9 @@ export class GameScene extends Phaser.Scene {
         // Load the sidebar
         this.load.image('sidebar', 'assets/sidebar.png');
 
+        // Load the background for the game
+        this.load.image('gameScene-bg', 'assets/gameScene-bg.jpg');
+
         // Load the images with text
         this.load.image('wellDone', 'assets/wellDone.png');
 
@@ -41,6 +44,9 @@ export class GameScene extends Phaser.Scene {
 
     // Create Method
     create() {
+        // Set the background image
+        this.add.image(960, 540, 'gameScene-bg');
+        
         // Create the vector line
         this.vectorLine = new vectorLine(this);
 
