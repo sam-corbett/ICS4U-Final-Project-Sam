@@ -352,6 +352,8 @@ export class GameScene extends Phaser.Scene {
             triangleGems[counter].destroy();
         }
         this.gems = this.gems.filter(gem => !triangleGems.includes(gem));
+
+        console.log('Inside Gems:', insideGemsCount);
     
         this.checkAndRespawnGems();
         return insideGemsCount;
