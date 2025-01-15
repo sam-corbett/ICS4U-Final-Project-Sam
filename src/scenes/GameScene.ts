@@ -235,13 +235,7 @@ export class GameScene extends Phaser.Scene {
                 // and clear the gems if they are inside that triangle
                 } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
-                    const clearedGemsInsideTriangle = this.clearGemsInsideTriangle(lines);
                     this.updateScore(3 * 300);
-                    if (clearedGemsInsideTriangle > 0) {
-                        this.turns += clearedGemsInsideTriangle;
-                    } else {
-                        this.turns -= 1;
-                    }
                 // If the line is formed, clear the gems and lines
                 // Else clear the lines
                 } else if (this.isLine(lines)) {
@@ -358,6 +352,9 @@ export class GameScene extends Phaser.Scene {
         // Increment turns if there are gems inside the triangle
         if (insideGemsCount > 0) {
             this.turns++;
+            this.turnsText.setText(`${this.turns}`);
+        } else if (insideGemsCount === 0) {
+            this.turns--;
             this.turnsText.setText(`${this.turns}`);
         }
     
