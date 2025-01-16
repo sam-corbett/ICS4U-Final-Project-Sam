@@ -41,6 +41,10 @@ export class GameScene extends Phaser.Scene {
 
         // Load the images with text
         this.load.image('wellDone', 'assets/wellDone.png');
+        this.load.image('gameOver', 'assets/gameOver.png');
+
+        // Load the UI
+        this.load.image('quitButton', 'assets/quitButton.png');
 
         // Load the gems
         this.load.image('gem1', 'assets/gem1.png');
@@ -217,7 +221,7 @@ export class GameScene extends Phaser.Scene {
             }
     
             const lines = this.vectorLine.lockedLines;
-
+    
             // If the end point is not inside the selected gem
             // Clear the lines
             if (!this.selectedGem.getBounds().contains(endX, endY)) {
@@ -262,6 +266,11 @@ export class GameScene extends Phaser.Scene {
         this.score += points;
         this.scoreText.setText(`${this.score}`);
         this.turnsText.setText(`${this.turns}`);
+
+        // Que GameOver
+        if (this.turns === 0) {
+            this.queGameOver();
+        }
     }
 
     /**
@@ -357,7 +366,7 @@ export class GameScene extends Phaser.Scene {
 
         // Increment turns if there are gems inside the triangle
         if (insideGemsCount > 0) {
-            this.turns += insideGemsCount;
+            this.turns += insideGemsCount + 1;
             this.turnsText.setText(`${this.turns}`);
         }
     
@@ -365,14 +374,37 @@ export class GameScene extends Phaser.Scene {
         return insideGemsCount;
     }
 
-        // Check if all gems are cleared and respawn if necessary
-        private checkAndRespawnGems() {
-            if (this.gems.length === 0) {
-                this.numGemsToSpawn++;
-                this.showWellDone();
-                this.spawnGems();
-                this.rounds++;
-                this.roundsText.setText(`${this.rounds}`);
-            }
+    // Check if all gems are cleared and respawn if necessary
+    private checkAndRespawnGems() {
+        if (this.gems.length === 0) {
+            this.numGemsToSpawn++;
+            this.showWellDone();
+            this.spawnGems();
+            this.rounds++;
+            this.roundsText.setText(`${this.rounds}`);
         }
+    }
+
+    // Que GameOver Method
+    private queGameOver() {
+        setTimeout(() => {
+            // Remove remaining gems
+            for (let counter = 0; counter < this.gems.length; counter++) {
+                this.gems[counter].destroy();
+            }
+            this.gems = [];
+
+            // Display gameOver.png
+            const gameOverImage = this.add.image(1160, 540, 'gameOver');
+            gameOverImage.setOrigin(0.5, 0.5);
+
+            // Display quitButton
+            const quitButton = this.add.image(1160, 800, 'quitButton');
+            quitButton.setOrigin(0.5, 0.5);
+            quitButton.setInteractive();
+            quitButton.on('pointerdown', () => {
+                this.scene.start('TitleScreen');
+            });
+        }, 2000);
+    }
 }
