@@ -397,14 +397,30 @@ export class GameScene extends Phaser.Scene {
             // Display gameOver.png
             const gameOverImage = this.add.image(1160, 540, 'gameOver');
             gameOverImage.setOrigin(0.5, 0.5);
+            gameOverImage.setScale(2);
 
             // Display quitButton
             const quitButton = this.add.image(1160, 800, 'quitButton');
             quitButton.setOrigin(0.5, 0.5);
+            quitButton.setScale(0.5);
             quitButton.setInteractive();
             quitButton.on('pointerdown', () => {
+                this.resetGame();
                 this.scene.start('TitleScreen');
             });
-        }, 2000);
+        }, 1500);
+    }
+
+    // Reset Method
+    private resetGame() {
+        this.score = 0;
+        this.scoreText.setText(`${this.score}`);
+        this.rounds = 1;
+        this.roundsText.setText(`${this.rounds}`);
+        this.turns = 15;
+        this.turnsText.setText(`${this.turns}`);
+        this.numGemsToSpawn = 6;
+        this.gems = [];
+        this.spawnGems();
     }
 }
