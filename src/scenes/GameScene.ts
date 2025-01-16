@@ -17,10 +17,14 @@ export class GameScene extends Phaser.Scene {
     private gems: Phaser.GameObjects.Image[] = [];
     private isDrawingLine: boolean = false;
     private numGemsToSpawn: number = 6;
+
+    // Score, Rounds, and Turns
     private score: number = 0;
     private scoreText: Phaser.GameObjects.Text;
     private rounds: number = 1;
     private roundsText: Phaser.GameObjects.Text;
+    private turns: number = 15;
+    private turnsText: Phaser.GameObjects.Text;
 
     // Constructor Method
     constructor() {
@@ -37,6 +41,10 @@ export class GameScene extends Phaser.Scene {
 
         // Load the images with text
         this.load.image('wellDone', 'assets/wellDone.png');
+        this.load.image('gameOver', 'assets/gameOver.png');
+
+        // Load the UI
+        this.load.image('quitButton', 'assets/quitButton.png');
 
         // Load the gems
         this.load.image('gem1', 'assets/gem1.png');
@@ -64,7 +72,7 @@ export class GameScene extends Phaser.Scene {
         this.add.image(200, 540, 'sidebar');
 
         // Add the score text
-        this.scoreText = this.add.text(100, 250, `${this.score}`, {
+        this.scoreText = this.add.text(180, 250, `${this.score}`, {
             fontSize: '40px',
             color: '#000',
             fontFamily: 'Arial',
@@ -72,7 +80,15 @@ export class GameScene extends Phaser.Scene {
         });
 
         // Add the rounds text
-        this.roundsText = this.add.text(180, 450, `${this.rounds}`, {
+        this.roundsText = this.add.text(180, 520, `${this.rounds}`, {
+            fontSize: '40px',
+            color: '#000',
+            fontFamily: 'Arial',
+            align: 'center'
+        });
+
+        // Add the turns text
+        this.turnsText = this.add.text(180, 790, `${this.turns}`, {
             fontSize: '40px',
             color: '#000',
             fontFamily: 'Arial',
@@ -205,7 +221,7 @@ export class GameScene extends Phaser.Scene {
             }
     
             const lines = this.vectorLine.lockedLines;
-
+    
             // If the end point is not inside the selected gem
             // Clear the lines
             if (!this.selectedGem.getBounds().contains(endX, endY)) {
@@ -217,17 +233,25 @@ export class GameScene extends Phaser.Scene {
                     this.selectedGem.destroy();
                     this.gems = this.gems.filter(gem => gem !== this.selectedGem);
                     this.updateScore(1 * 100);
+                    this.turns--;
                     this.checkAndRespawnGems();
                 // If the triangle is formed, clear the gems and lines
                 // and clear the gems if they are inside that triangle
                 } else if (this.isTriangle(lines)) {
                     this.clearGemsAndLines(lines);
+                    const clearedGemsInsideTriangle = this.clearGemsInsideTriangle(lines);
                     this.updateScore(3 * 300);
+                    if (clearedGemsInsideTriangle > 0) {
+                        this.turns += clearedGemsInsideTriangle;
+                    } else {
+                        this.turns -= 1;
+                    }
                 // If the line is formed, clear the gems and lines
                 // Else clear the lines
                 } else if (this.isLine(lines)) {
                     const clearedGems = this.clearGemsAndLines(lines);
                     this.updateScore(clearedGems * 200);
+                    this.turns--;
                 } else {
                     this.vectorLine.clearLines();
                 }
@@ -241,6 +265,12 @@ export class GameScene extends Phaser.Scene {
     private updateScore(points: number) {
         this.score += points;
         this.scoreText.setText(`${this.score}`);
+        this.turnsText.setText(`${this.turns}`);
+
+        // Que GameOver
+        if (this.turns === 0) {
+            this.queGameOver();
+        }
     }
 
     /**
@@ -331,19 +361,52 @@ export class GameScene extends Phaser.Scene {
             triangleGems[counter].destroy();
         }
         this.gems = this.gems.filter(gem => !triangleGems.includes(gem));
+
+        console.log('Inside Gems:', insideGemsCount);
+
+        // Increment turns if there are gems inside the triangle
+        if (insideGemsCount > 0) {
+            this.turns += insideGemsCount + 1;
+            this.turnsText.setText(`${this.turns}`);
+        }
     
         this.checkAndRespawnGems();
         return insideGemsCount;
     }
 
-        // Check if all gems are cleared and respawn if necessary
-        private checkAndRespawnGems() {
-            if (this.gems.length === 0) {
-                this.numGemsToSpawn++;
-                this.showWellDone();
-                this.spawnGems();
-                this.rounds++;
-                this.roundsText.setText(`${this.rounds}`);
-            }
+    // Check if all gems are cleared and respawn if necessary
+    private checkAndRespawnGems() {
+        if (this.gems.length === 0) {
+            this.numGemsToSpawn++;
+            this.showWellDone();
+            this.spawnGems();
+            this.rounds++;
+            this.roundsText.setText(`${this.rounds}`);
         }
+    }
+
+    // Que GameOver Method
+    private queGameOver() {
+        setTimeout(() => {
+            // Remove remaining gems
+            for (let counter = 0; counter < this.gems.length; counter++) {
+                this.gems[counter].destroy();
+            }
+            this.gems = [];
+
+            // Display gameOver.png
+            const gameOverImage = this.add.image(1160, 540, 'gameOver');
+            gameOverImage.setOrigin(0.5, 0.5);
+            gameOverImage.setScale(2);
+
+            // Display quitButton
+            const quitButton = this.add.image(1160, 800, 'quitButton');
+            quitButton.setOrigin(0.5, 0.5);
+            quitButton.setScale(0.5);
+            quitButton.setInteractive();
+            quitButton.on('pointerdown', () => {
+                window.location.reload();
+            });
+        }, 1500);
+    }
 }

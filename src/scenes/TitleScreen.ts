@@ -26,8 +26,10 @@ export class TitleScreen extends Scene
         this.load.image('title-bg', 'assets/titleScreen-bg.jpg');
     // Load the JewelBondz Logo
         this.load.image('jewelbondz-logo', 'assets/jewelbondz-logo.png');
-    // Load the Play Button
+    // Load the Start Button
         this.load.image('start-button', 'assets/startButton.png');
+    // Load the Credits Button
+        this.load.image('credits-button', 'assets/creditsButton.png');
     }
     
     // Create Method
@@ -40,12 +42,21 @@ export class TitleScreen extends Scene
         this.image.setOrigin(0.5, 0.5);
 
         // Create the Start Button GameObject
-        const startButton = this.add.image(960, 940, 'start-button').setInteractive();
+        const startButton = this.add.image(800, 940, 'start-button').setInteractive();
         startButton.setScale(0.5);
 
         // Set the Start Button to direct to the mainMenu Scene
         startButton.on('pointerdown', () => {
             this.scene.start('MainMenu');
+        });
+
+        // Create the Credits Button GameObject
+        const creditsButton = this.add.image(1120, 940, 'credits-button').setInteractive();
+        creditsButton.setScale(0.5);
+
+        // Set the Credits Button to direct to the Credits Scene
+        creditsButton.on('pointerdown', () => {
+            this.scene.start('CreditsScene');
         });
     }
 }
