@@ -23,7 +23,7 @@ export class CreditsScene extends Scene
     // Preload Method
     preload () {
     // Load the title image
-        this.load.image('credits-bg', 'assets/creditsScreen-bg.png');
+        this.load.image('credits-bg', 'assets/creditsScene-bg.png');
     // Load the back button
         this.load.image('back-button', 'assets/backButton.png');
     }
