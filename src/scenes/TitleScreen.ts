@@ -31,6 +31,8 @@ export class TitleScreen extends Scene {
         this.load.image('credits-button', 'assets/creditsButton.png');
     // Load the Main Music
         this.load.audio('mainMusic', 'assets/sound/mainMusic.mp3');
+    // Load the UI Sound
+        this.load.audio('UI-sound', 'assets/sound/UI.mp3');
     }
     
     // Create Method
@@ -48,6 +50,7 @@ export class TitleScreen extends Scene {
 
         // Set the Start Button to direct to the mainMenu Scene
         startButton.on('pointerdown', () => {
+            this.sound.play('UI-sound');
             this.scene.start('MainMenu');
         });
 
@@ -57,6 +60,7 @@ export class TitleScreen extends Scene {
 
         // Set the Credits Button to direct to the Credits Scene
         creditsButton.on('pointerdown', () => {
+            this.sound.play('UI-sound');
             this.scene.start('CreditsScene');
         });
 

@@ -26,6 +26,8 @@ export class CreditsScene extends Scene
         this.load.image('credits-bg', 'assets/creditsScene-bg.png');
     // Load the back button
         this.load.image('back-button', 'assets/backButton.png');
+    // Load the UI Sound
+        this.load.audio('UI-sound', 'assets/sound/UI.mp3');
     }
     
     // Create Method
@@ -39,6 +41,7 @@ export class CreditsScene extends Scene
 
         // Set the Back Button to direct to the Title Scene
         backButton.on('pointerdown', () => {
+            this.sound.play('UI-sound');
             this.scene.start('TitleScreen');
         });
     }

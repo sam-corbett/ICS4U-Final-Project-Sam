@@ -63,7 +63,7 @@ export class GameScene extends Phaser.Scene {
         this.load.audio('gameOver', 'assets/sound/gameOver.mp3');
 
         // Music
-        this.load.audio('gameMusic', 'assets/music/gameMusic.mp3');
+        this.load.audio('gameMusic', 'assets/sound/gameMusic.mp3');
     }
 
     // Create Method
@@ -171,8 +171,8 @@ export class GameScene extends Phaser.Scene {
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
-                this.sound.play('jewelSound');
                 this.time.delayedCall(150, () => {
+                    this.sound.play('jewelSound');
                     if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
                         this.vectorLine.startDrawing(gem.x, gem.y);

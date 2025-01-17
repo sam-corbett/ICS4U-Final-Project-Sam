@@ -59,6 +59,7 @@ export class MainMenu extends Scene
 
         // Set the Back Button to direct to the Title Scene
         backButton.on('pointerdown', () => {
+            this.sound.play('UI-sound');
             this.scene.start('TitleScreen');
         });
     }
