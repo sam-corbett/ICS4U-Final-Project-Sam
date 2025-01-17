@@ -58,6 +58,7 @@ export class GameScene extends Phaser.Scene {
         // SFX
         this.load.audio('UI-sound', 'assets/sound/UI.mp3');
         this.load.audio('jewelSound', 'assets/sound/jewelSound.mp3');
+        this.load.audio('jewelClearSound', 'assets/sound/jewelClearSound.mp3');
         this.load.audio('extraTurns', 'assets/sound/extraTurns.mp3');
         this.load.audio('wellDoneSound', 'assets/sound/wellDoneSound.mp3');
         this.load.audio('gameOver', 'assets/sound/gameOver.mp3');
@@ -87,7 +88,7 @@ export class GameScene extends Phaser.Scene {
         this.scoreText = this.add.text(180, 250, `${this.score}`, {
             fontSize: '50px',
             color: '#000',
-            fontFamily: 'Arial',
+            fontFamily: 'Quicksand',
             align: 'center'
         });
 
@@ -95,7 +96,7 @@ export class GameScene extends Phaser.Scene {
         this.roundsText = this.add.text(180, 530, `${this.rounds}`, {
             fontSize: '50px',
             color: '#000',
-            fontFamily: 'Arial',
+            fontFamily: 'Quicksand',
             align: 'center'
         });
 
@@ -103,7 +104,7 @@ export class GameScene extends Phaser.Scene {
         this.turnsText = this.add.text(180, 810, `${this.turns}`, {
             fontSize: '50px',
             color: '#000',
-            fontFamily: 'Arial',
+            fontFamily: 'Quicksand',
             align: 'center'
         });
 
@@ -118,7 +119,7 @@ export class GameScene extends Phaser.Scene {
         const wellDoneImage = this.add.image(1160, 540, 'wellDone');
         wellDoneImage.setScale(2);
         wellDoneImage.setDepth(1);
-        this.sound.play('wellDoneSound');
+        this.sound.play('wellDoneSound', { volume: 0.75 });
         this.time.delayedCall(2500, () => {
             wellDoneImage.destroy();
         });
@@ -213,6 +214,7 @@ export class GameScene extends Phaser.Scene {
                 this.vectorLine.lockLine(overlappingGem.x, overlappingGem.y);
                 this.isGemClicked = true;
                 this.selectedGem = overlappingGem;
+                this.sound.play('jewelSound');
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
     
                 // Debugging: Log the locked lines
@@ -252,6 +254,7 @@ export class GameScene extends Phaser.Scene {
                     this.gems = this.gems.filter(gem => gem !== this.selectedGem);
                     this.updateScore(1 * 100);
                     this.turns--;
+                    this.sound.play('jewelClearSound');
                     this.checkAndRespawnGems();
                 // If the triangle is formed, clear the gems and lines
                 // and clear the gems if they are inside that triangle
@@ -263,6 +266,7 @@ export class GameScene extends Phaser.Scene {
                         this.turns += clearedGemsInsideTriangle;
                     } else {
                         this.turns -= 1;
+                        this.sound.play('jewelClearSound');
                     }
                 // If the line is formed, clear the gems and lines
                 // Else clear the lines
@@ -270,6 +274,7 @@ export class GameScene extends Phaser.Scene {
                     const clearedGems = this.clearGemsAndLines(lines);
                     this.updateScore(clearedGems * 200);
                     this.turns--;
+                    this.sound.play('jewelClearSound');
                 } else {
                     this.vectorLine.clearLines();
                 }
