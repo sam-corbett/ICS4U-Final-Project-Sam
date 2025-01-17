@@ -17,6 +17,7 @@ export class GameScene extends Phaser.Scene {
     private gems: Phaser.GameObjects.Image[] = [];
     private isDrawingLine: boolean = false;
     private numGemsToSpawn: number = 6;
+    private gameMusic: Phaser.Sound.BaseSound;
 
     // Score, Rounds, and Turns
     private score: number = 0;
@@ -52,6 +53,17 @@ export class GameScene extends Phaser.Scene {
         this.load.image('gem3', 'assets/gem3.png');
         this.load.image('gem4', 'assets/gem4.png');
         this.load.image('gem5', 'assets/gem5.png');
+
+        // Load the sound & music
+        // SFX
+        this.load.audio('UI-sound', 'assets/sound/UI.mp3');
+        this.load.audio('jewelSound', 'assets/sound/jewelSound.mp3');
+        this.load.audio('extraTurns', 'assets/sound/extraTurns.mp3');
+        this.load.audio('wellDoneSound', 'assets/sound/wellDoneSound.mp3');
+        this.load.audio('gameOver', 'assets/sound/gameOver.mp3');
+
+        // Music
+        this.load.audio('gameMusic', 'assets/music/gameMusic.mp3');
     }
 
     // Create Method
@@ -73,27 +85,31 @@ export class GameScene extends Phaser.Scene {
 
         // Add the score text
         this.scoreText = this.add.text(180, 250, `${this.score}`, {
-            fontSize: '40px',
+            fontSize: '50px',
             color: '#000',
             fontFamily: 'Arial',
             align: 'center'
         });
 
         // Add the rounds text
-        this.roundsText = this.add.text(180, 520, `${this.rounds}`, {
-            fontSize: '40px',
+        this.roundsText = this.add.text(180, 530, `${this.rounds}`, {
+            fontSize: '50px',
             color: '#000',
             fontFamily: 'Arial',
             align: 'center'
         });
 
         // Add the turns text
-        this.turnsText = this.add.text(180, 790, `${this.turns}`, {
-            fontSize: '40px',
+        this.turnsText = this.add.text(180, 810, `${this.turns}`, {
+            fontSize: '50px',
             color: '#000',
             fontFamily: 'Arial',
             align: 'center'
         });
+
+        // Loop the game music
+        this.gameMusic = this.sound.add('gameMusic')
+        this.gameMusic.play({ loop: true });
     }
 
 
@@ -102,6 +118,7 @@ export class GameScene extends Phaser.Scene {
         const wellDoneImage = this.add.image(1160, 540, 'wellDone');
         wellDoneImage.setScale(2);
         wellDoneImage.setDepth(1);
+        this.sound.play('wellDoneSound');
         this.time.delayedCall(2500, () => {
             wellDoneImage.destroy();
         });
@@ -154,6 +171,7 @@ export class GameScene extends Phaser.Scene {
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
+                this.sound.play('jewelSound');
                 this.time.delayedCall(150, () => {
                     if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
@@ -181,8 +199,8 @@ export class GameScene extends Phaser.Scene {
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
     
-            for (let i = 0; i < this.gems.length; i++) {
-                const gem = this.gems[i];
+            for (let counter = 0; counter < this.gems.length; counter++) {
+                const gem = this.gems[counter];
                 if (gem.getBounds().contains(pointer.x, pointer.y) && gem !== this.selectedGem) {
                     overlappingGem = gem;
                     break;
@@ -367,6 +385,7 @@ export class GameScene extends Phaser.Scene {
         // Increment turns if there are gems inside the triangle
         if (insideGemsCount > 0) {
             this.turns += insideGemsCount + 1;
+            this.sound.play('extraTurns');
             this.turnsText.setText(`${this.turns}`);
         }
     
@@ -388,6 +407,9 @@ export class GameScene extends Phaser.Scene {
     // Que GameOver Method
     private queGameOver() {
         setTimeout(() => {
+            // Stop the game music
+            this.gameMusic.stop();
+
             // Remove remaining gems
             for (let counter = 0; counter < this.gems.length; counter++) {
                 this.gems[counter].destroy();
@@ -399,12 +421,16 @@ export class GameScene extends Phaser.Scene {
             gameOverImage.setOrigin(0.5, 0.5);
             gameOverImage.setScale(2);
 
+            // Play the game over sound
+            this.sound.play('gameOver');
+
             // Display quitButton
             const quitButton = this.add.image(1160, 800, 'quitButton');
             quitButton.setOrigin(0.5, 0.5);
             quitButton.setScale(0.5);
             quitButton.setInteractive();
             quitButton.on('pointerdown', () => {
+                this.sound.play('UI-sound');
                 window.location.reload();
             });
         }, 1500);

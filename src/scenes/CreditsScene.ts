@@ -34,7 +34,7 @@ export class CreditsScene extends Scene
         this.add.image(960, 540, 'credits-bg');
 
         // Create the Back Button GameObject
-        const backButton = this.add.image(960, 840, 'back-button').setInteractive();
+        const backButton = this.add.image(960, 880, 'back-button').setInteractive();
         backButton.setScale(0.5);
 
         // Set the Back Button to direct to the Title Scene

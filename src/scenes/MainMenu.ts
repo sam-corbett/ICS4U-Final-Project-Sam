@@ -28,6 +28,10 @@ export class MainMenu extends Scene
         this.load.image('play-button', 'assets/playButton.png');
     // Load the back button
         this.load.image('back-button', 'assets/backButton.png');
+    // Load the UI Sound
+        this.load.audio('UI-sound', 'assets/sound/UI.mp3');
+    // Load the playButtonSound Sound
+        this.load.audio('playButtonSound', 'assets/sound/playButtonSound.mp3');
     }
     
     // Create Method
@@ -41,6 +45,11 @@ export class MainMenu extends Scene
 
         // Set the Play Button to direct to the Game Scene
         playButton.on('pointerdown', () => {
+            const mainMusic = (this.game as any).mainMusic;
+            if (mainMusic) {
+                mainMusic.stop();
+            }
+            this.sound.play('playButtonSound');
             this.scene.start('GameScene');
         });
 
