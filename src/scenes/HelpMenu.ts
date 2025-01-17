@@ -36,13 +36,13 @@ export class HelpMenu extends Scene {
         this.add.image(960, 540, 'helpMenu-bg');
 
         // Create the Back Button GameObject
-        const backButton = this.add.image(960, 900, 'back-button').setInteractive();
+        const backButton = this.add.image(960, 1000, 'back-button').setInteractive();
         backButton.setScale(0.5);
 
         // Set the Back Button to direct back to the Game Scene
         backButton.on('pointerdown', () => {
             this.sound.play('UI-sound');
-            this.scene.start('GameScene');
+            this.scene.start('MainMenu');
         });
     }
 }

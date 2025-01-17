@@ -27,6 +27,8 @@ export class MainMenu extends Scene {
         this.load.image('play-button', 'assets/playButton.png');
     // Load the back button
         this.load.image('back-button', 'assets/backButton.png');
+    // Load the advanced help button
+        this.load.image('advanced-help-button', 'assets/advancedHelpButton.png');
     // Load the UI Sound
         this.load.audio('UI-sound', 'assets/sound/UI.mp3');
     // Load the playButtonSound Sound
@@ -60,6 +62,16 @@ export class MainMenu extends Scene {
         backButton.on('pointerdown', () => {
             this.sound.play('UI-sound');
             this.scene.start('TitleScreen');
+        });
+
+        // Create the Advanced Help Button GameObject
+        const advancedHelpButton = this.add.image(1900, 50, 'advanced-help-button').setInteractive();
+        advancedHelpButton.setScale(0.5);
+
+        // Set the A.H.B. to direct to the Help Menu Scene
+        advancedHelpButton.on('pointerdown', () => {
+            this.sound.play('UI-sound');
+            this.scene.start('HelpMenu');
         });
     }
 }
