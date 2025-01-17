@@ -65,7 +65,7 @@ export class MainMenu extends Scene {
         });
 
         // Create the Advanced Help Button GameObject
-        const advancedHelpButton = this.add.image(1805, 45, 'advanced-help-button').setInteractive();
+        const advancedHelpButton = this.add.image(1805, 65, 'advanced-help-button').setInteractive();
         advancedHelpButton.setScale(0.15);
 
         // Set the A.H.B. to direct to the Help Menu Scene
