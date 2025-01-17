@@ -46,6 +46,7 @@ export class GameScene extends Phaser.Scene {
 
         // Load the UI
         this.load.image('quitButton', 'assets/quitButton.png');
+        this.load.image('helpButton', 'assets/helpButton.png');
 
         // Load the gems
         this.load.image('gem1', 'assets/gem1.png');
@@ -83,6 +84,15 @@ export class GameScene extends Phaser.Scene {
 
         // Add the sidebar
         this.add.image(200, 540, 'sidebar');
+
+        // Add the help button
+        const helpButton = this.add.image(200, 900, 'helpButton');
+        helpButton.setScale(0.07);
+        helpButton.setInteractive();
+        helpButton.on('pointerdown', () => {
+            this.sound.play('UI-sound');
+            this.scene.start('HelpMenu');
+        });
 
         // Add the score text
         this.scoreText = this.add.text(180, 250, `${this.score}`, {
@@ -254,7 +264,6 @@ export class GameScene extends Phaser.Scene {
                     this.gems = this.gems.filter(gem => gem !== this.selectedGem);
                     this.updateScore(1 * 100);
                     this.turns--;
-                    this.sound.play('jewelClearSound');
                     this.checkAndRespawnGems();
                 // If the triangle is formed, clear the gems and lines
                 // and clear the gems if they are inside that triangle

@@ -10,8 +10,7 @@
 import { Scene, GameObjects } from 'phaser';
 
 // Create the mainMenu Scene
-export class CreditsScene extends Scene
-{
+export class CreditsScene extends Scene {
     // Image Property
     image: GameObjects.Image;
 
