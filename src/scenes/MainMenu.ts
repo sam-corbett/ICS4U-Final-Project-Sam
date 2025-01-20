@@ -10,8 +10,7 @@
 import { Scene, GameObjects } from 'phaser';
 
 // Create the mainMenu Scene
-export class MainMenu extends Scene
-{
+export class MainMenu extends Scene {
     // Image Property
     image: GameObjects.Image;
 
@@ -28,6 +27,12 @@ export class MainMenu extends Scene
         this.load.image('play-button', 'assets/playButton.png');
     // Load the back button
         this.load.image('back-button', 'assets/backButton.png');
+    // Load the advanced help button
+        this.load.image('advanced-help-button', 'assets/advancedHelpButton.png');
+    // Load the UI Sound
+        this.load.audio('UI-sound', 'assets/sound/UI.mp3');
+    // Load the playButtonSound Sound
+        this.load.audio('playButtonSound', 'assets/sound/playButtonSound.mp3');
     }
     
     // Create Method
@@ -41,6 +46,11 @@ export class MainMenu extends Scene
 
         // Set the Play Button to direct to the Game Scene
         playButton.on('pointerdown', () => {
+            const mainMusic = (this.game as any).mainMusic;
+            if (mainMusic) {
+                mainMusic.stop();
+            }
+            this.sound.play('playButtonSound');
             this.scene.start('GameScene');
         });
 
@@ -50,7 +60,18 @@ export class MainMenu extends Scene
 
         // Set the Back Button to direct to the Title Scene
         backButton.on('pointerdown', () => {
+            this.sound.play('UI-sound');
             this.scene.start('TitleScreen');
+        });
+
+        // Create the Advanced Help Button GameObject
+        const advancedHelpButton = this.add.image(1805, 65, 'advanced-help-button').setInteractive();
+        advancedHelpButton.setScale(0.15);
+
+        // Set the A.H.B. to direct to the Help Menu Scene
+        advancedHelpButton.on('pointerdown', () => {
+            this.sound.play('UI-sound');
+            this.scene.start('HelpMenu');
         });
     }
 }

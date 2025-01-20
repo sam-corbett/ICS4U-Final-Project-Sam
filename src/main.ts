@@ -12,6 +12,7 @@ import { TitleScreen } from './scenes/TitleScreen';
 import { CreditsScene } from './scenes/CreditsScene';
 import { MainMenu } from './scenes/MainMenu';
 import { GameScene } from './scenes/GameScene';
+import { HelpMenu } from './scenes/HelpMenu';
 
 // Phaser
 import { Game, Types } from "phaser";
@@ -27,7 +28,7 @@ const config: Types.Core.GameConfig = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    scene: [TitleScreen, MainMenu, GameScene, CreditsScene],
+    scene: [TitleScreen, MainMenu, GameScene, CreditsScene, HelpMenu],
     physics: {
         default: 'arcade',
         arcade: {

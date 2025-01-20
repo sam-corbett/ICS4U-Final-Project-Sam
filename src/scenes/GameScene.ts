@@ -1,8 +1,8 @@
 /**
- * The game scene. (WIP)
+ * The game scene.
  * 
  * By: Sam Corbett
- * Version: 0.8
+ * Version: 1.0
  * Since: 2025/01/07
  */
 
@@ -17,6 +17,7 @@ export class GameScene extends Phaser.Scene {
     private gems: Phaser.GameObjects.Image[] = [];
     private isDrawingLine: boolean = false;
     private numGemsToSpawn: number = 6;
+    private gameMusic: Phaser.Sound.BaseSound;
 
     // Score, Rounds, and Turns
     private score: number = 0;
@@ -52,6 +53,18 @@ export class GameScene extends Phaser.Scene {
         this.load.image('gem3', 'assets/gem3.png');
         this.load.image('gem4', 'assets/gem4.png');
         this.load.image('gem5', 'assets/gem5.png');
+
+        // Load the sound & music
+        // SFX
+        this.load.audio('UI-sound', 'assets/sound/UI.mp3');
+        this.load.audio('jewelSound', 'assets/sound/jewelSound.mp3');
+        this.load.audio('jewelClearSound', 'assets/sound/jewelClearSound.mp3');
+        this.load.audio('extraTurns', 'assets/sound/extraTurns.mp3');
+        this.load.audio('wellDoneSound', 'assets/sound/wellDoneSound.mp3');
+        this.load.audio('gameOver', 'assets/sound/gameOver.mp3');
+
+        // Music
+        this.load.audio('gameMusic', 'assets/sound/gameMusic.mp3');
     }
 
     // Create Method
@@ -73,27 +86,31 @@ export class GameScene extends Phaser.Scene {
 
         // Add the score text
         this.scoreText = this.add.text(180, 250, `${this.score}`, {
-            fontSize: '40px',
+            fontSize: '50px',
             color: '#000',
-            fontFamily: 'Arial',
+            fontFamily: 'Quicksand',
             align: 'center'
         });
 
         // Add the rounds text
-        this.roundsText = this.add.text(180, 520, `${this.rounds}`, {
-            fontSize: '40px',
+        this.roundsText = this.add.text(180, 530, `${this.rounds}`, {
+            fontSize: '50px',
             color: '#000',
-            fontFamily: 'Arial',
+            fontFamily: 'Quicksand',
             align: 'center'
         });
 
         // Add the turns text
-        this.turnsText = this.add.text(180, 790, `${this.turns}`, {
-            fontSize: '40px',
+        this.turnsText = this.add.text(180, 810, `${this.turns}`, {
+            fontSize: '50px',
             color: '#000',
-            fontFamily: 'Arial',
+            fontFamily: 'Quicksand',
             align: 'center'
         });
+
+        // Loop the game music
+        this.gameMusic = this.sound.add('gameMusic')
+        this.gameMusic.play({ loop: true });
     }
 
 
@@ -102,6 +119,7 @@ export class GameScene extends Phaser.Scene {
         const wellDoneImage = this.add.image(1160, 540, 'wellDone');
         wellDoneImage.setScale(2);
         wellDoneImage.setDepth(1);
+        this.sound.play('wellDoneSound', { volume: 0.75 });
         this.time.delayedCall(2500, () => {
             wellDoneImage.destroy();
         });
@@ -116,6 +134,7 @@ export class GameScene extends Phaser.Scene {
         const gemTypes = ['gem1', 'gem2', 'gem3', 'gem4', 'gem5'];
         let gemTypeDistribution;
     
+        // Set the gem type distribution based on the number of gems to spawn
         if (this.numGemsToSpawn <= 10) {
             gemTypeDistribution = ['gem1', 'gem2'];
         } else if (this.numGemsToSpawn <= 15) {
@@ -126,9 +145,12 @@ export class GameScene extends Phaser.Scene {
             gemTypeDistribution = gemTypes;
         }
 
+        // Spawn the gems
         for (let counter1 = 0; counter1 < totalGemsToSpawn; counter1++) {
             let xCord, yCord, gem, overlap;
     
+            // Check if the gem is overlapping with any other gem
+            // If it is, generate a new random position
             do {
                 xCord = Phaser.Math.Between(400, 1900);
                 yCord = Phaser.Math.Between(20, 1060);
@@ -144,6 +166,7 @@ export class GameScene extends Phaser.Scene {
                 }
             } while (overlap);
     
+            // Setting the gem type
             const gemType = gemTypeDistribution[Math.floor(Math.random() * gemTypeDistribution.length)];
             gem = this.add.image(xCord, yCord, gemType);
             gem.setScale(0.07);
@@ -151,14 +174,19 @@ export class GameScene extends Phaser.Scene {
             gem.setDepth(0)
             this.gems.push(gem);
     
+            // Add the pointerdown event listener
+            // when the gem is clicked
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 this.time.delayedCall(150, () => {
+                    this.sound.play('jewelSound');
+                    // Start drawing the line
                     if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
                         this.vectorLine.startDrawing(gem.x, gem.y);
                     } else {
+                        // If the conditions are met, destroy the gem
                         if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
                             this.selectedGem.destroy();
                             this.gems = this.gems.filter(g => g !== this.selectedGem);
@@ -174,6 +202,11 @@ export class GameScene extends Phaser.Scene {
 
     // Update Method
     update() {
+        /**
+         * If the pointer is down and the gem is clicked
+         * and the selected gem is not null,
+         * Draw the line.
+         */
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.isDrawingLine = true;
             this.vectorLine.onPointerMove(this.input.activePointer);
@@ -181,8 +214,9 @@ export class GameScene extends Phaser.Scene {
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
     
-            for (let i = 0; i < this.gems.length; i++) {
-                const gem = this.gems[i];
+            // Check if the pointer is overlapping with any gem
+            for (let counter = 0; counter < this.gems.length; counter++) {
+                const gem = this.gems[counter];
                 if (gem.getBounds().contains(pointer.x, pointer.y) && gem !== this.selectedGem) {
                     overlappingGem = gem;
                     break;
@@ -195,10 +229,8 @@ export class GameScene extends Phaser.Scene {
                 this.vectorLine.lockLine(overlappingGem.x, overlappingGem.y);
                 this.isGemClicked = true;
                 this.selectedGem = overlappingGem;
+                this.sound.play('jewelSound');
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
-    
-                // Debugging: Log the locked lines
-                console.log('Locked Lines:', this.vectorLine.lockedLines);
             }
         } else {
             this.isDrawingLine = false;
@@ -210,8 +242,12 @@ export class GameScene extends Phaser.Scene {
 
     // Pointer Up Method
     private onPointerUp() {
+        // If the gem is clicked and the selected gem is not null
+        // Check if the line is formed
         if (this.isGemClicked && this.selectedGem) {
             let endX, endY;
+            // If the line is locked, set the end point to the start point
+            // Else set the end point to the pointer position
             if (this.vectorLine.isLocked) {
                 endX = this.vectorLine.startPoint.x;
                 endY = this.vectorLine.startPoint.y;
@@ -245,6 +281,7 @@ export class GameScene extends Phaser.Scene {
                         this.turns += clearedGemsInsideTriangle;
                     } else {
                         this.turns -= 1;
+                        this.sound.play('jewelClearSound');
                     }
                 // If the line is formed, clear the gems and lines
                 // Else clear the lines
@@ -252,6 +289,7 @@ export class GameScene extends Phaser.Scene {
                     const clearedGems = this.clearGemsAndLines(lines);
                     this.updateScore(clearedGems * 200);
                     this.turns--;
+                    this.sound.play('jewelClearSound');
                 } else {
                     this.vectorLine.clearLines();
                 }
@@ -262,6 +300,7 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
+    // Update Score Method
     private updateScore(points: number) {
         this.score += points;
         this.scoreText.setText(`${this.score}`);
@@ -362,11 +401,10 @@ export class GameScene extends Phaser.Scene {
         }
         this.gems = this.gems.filter(gem => !triangleGems.includes(gem));
 
-        console.log('Inside Gems:', insideGemsCount);
-
         // Increment turns if there are gems inside the triangle
         if (insideGemsCount > 0) {
             this.turns += insideGemsCount + 1;
+            this.sound.play('extraTurns');
             this.turnsText.setText(`${this.turns}`);
         }
     
@@ -388,6 +426,9 @@ export class GameScene extends Phaser.Scene {
     // Que GameOver Method
     private queGameOver() {
         setTimeout(() => {
+            // Stop the game music
+            this.gameMusic.stop();
+
             // Remove remaining gems
             for (let counter = 0; counter < this.gems.length; counter++) {
                 this.gems[counter].destroy();
@@ -399,12 +440,16 @@ export class GameScene extends Phaser.Scene {
             gameOverImage.setOrigin(0.5, 0.5);
             gameOverImage.setScale(2);
 
+            // Play the game over sound
+            this.sound.play('gameOver');
+
             // Display quitButton
             const quitButton = this.add.image(1160, 800, 'quitButton');
             quitButton.setOrigin(0.5, 0.5);
             quitButton.setScale(0.5);
             quitButton.setInteractive();
             quitButton.on('pointerdown', () => {
+                this.sound.play('UI-sound');
                 window.location.reload();
             });
         }, 1500);
