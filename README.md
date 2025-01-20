@@ -8,6 +8,13 @@
     <img alt=playButton src="./public/assets/playButton.png">
   </a>
 </p>
+<p align="center">
+  <img alt=jewel1 src="./public/assets/gem1.png" width=30 height=30>
+  <img alt=jewel2 src="./public/assets/gem2.png" width=30 height=30>
+  <img alt=jewel3 src="./public/assets/gem3.png" width=30 height=30>
+  <img alt=jewel4 src="./public/assets/gem4.png" width=30 height=30>
+  <img alt=jewel5 src="./public/assets/gem5.png" width=30 height=30>
+</p>
 
 # Description:
 Jewel Bondz is a Phaser3 TypeScript-built web game where you adventure in a magical, and mystical cave full of jewels!
@@ -34,6 +41,19 @@ You can only connect jewels of the same type, and attempting to connect with oth
 different types won't be allowed. If a mistake is made upon connecting jewels, simply let go to 
 try again. You can't reverse the locked line connection once it's made, but it can be done 
 again as soon as you let go from drawing. That is unless the pointer or finger is inside the jewel.<br>
+
+# Scoring and Turns:
+<p align="center">
+Score:<br>
+1 Jewel by itself = 1 * 100 Ptns <br>
+2 Jewels in a line = 2 * 200 Ptns <br>
+3 Jewels in a triangle = 3 * 300 Ptns<br>
+<br>
+Turns:<br>
+Any action done = -1 Turn<br>
+If one jewel was inside a triangle = +1 Turn<br>
+<br>
+Each jewel that's inside the triangle will add one turn!
 
 # Copyright:
 Jewel Bondz was influenced from a minigame called Pearl Diver in [**Zenses Ocean**](https://vimm.net/vault/?p=play&mediaId=27656). It was a collection of six relaxing minigames (incl. Pearl Diver) for the Nintendo DS back in 2008; built by [**Shin'en Multimedia and The Game Factory**](https://www.shinen.com/games/game.php3?zenses%20ocean). Shin'en Multimedia is known for developing high quality games for the Game Boy Color, Game Boy Advanced, DS, Wii, WiiU, 3DS and Switch. While best from Nintendo's consoles and handhelds, they've also done games on the Xbox One, PS4/5, and Windows (Steam). Popular games include Art Of Balance, Jett Rocket, Fast RMX, and The Touryst.<br>
