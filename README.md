@@ -10,7 +10,7 @@
 </p>
 
 # Description:
-Jewel Bondz is a Phaser3 TypeScript-built web game where you adventure in a magical, and mystical cave full of jewels!<br>
+Jewel Bondz is a Phaser3 TypeScript-built web game where you adventure in a magical, and mystical cave full of jewels!
 Your goal is to make sure all the jewels are cleared from the screen, while achieving the 
 highest score in the least number of turns. You are allowed to make a single jewel go away, or 
 you can connect two to three jewels at a time (in either a line or triangle). The more jewels 
@@ -22,7 +22,7 @@ throughout their lives. This can, ultimately, bring the reduction of anxiety lev
 reflect decisions made within the game to decisions of the real world.<br>
 
 # Controls:
-If you're on a computer: **Mouse 🖱️**<br>
+If you're using a computer: **Mouse / Touchpad 🖱️**<br>
 If you're on a handheld device: **Touchscreen 📱👆**<br>
 (It is recommended to have a large touchscreen if planning to use Jewel Bondz on a handheld 
 device, e.g. an iPad. Any device, no matter what it is, will work with this game. Just ensure 
@@ -34,11 +34,6 @@ You can only connect jewels of the same type, and attempting to connect with oth
 different types won't be allowed. If a mistake is made upon connecting jewels, simply let go to 
 try again. You can't reverse the locked line connection once it's made, but it can be done 
 again as soon as you let go from drawing. That is unless the pointer or finger is inside the jewel.<br>
-
-# GIF Demo of Jewel Bondz:
-<p> 
-  <img alt=demonstration src="./demonstration.gif" width=769 height=434/>
-</p>
 
 # Copyright:
 Jewel Bondz was influenced from a minigame called Pearl Diver in [**Zenses Ocean**](https://vimm.net/vault/?p=play&mediaId=27656). It was a collection of six relaxing minigames (incl. Pearl Diver) for the Nintendo DS back in 2008; built by [**Shin'en Multimedia and The Game Factory**](https://www.shinen.com/games/game.php3?zenses%20ocean). Shin'en Multimedia is known for developing high quality games for the Game Boy Color, Game Boy Advanced, DS, Wii, WiiU, 3DS and Switch. While best from Nintendo's consoles and handhelds, they've also done games on the Xbox One, PS4/5, and Windows (Steam). Popular games include Art Of Balance, Jett Rocket, Fast RMX, and The Touryst.<br>
@@ -62,3 +57,8 @@ The sources used when playing the game originate from the following below:
   (NOTE: Some audio was extracted via page inspection)
 
 I encourage users to understand the MIT License of Phaser and use of this game before distributing modified copies this game as your own. Please include the proper credit and the licence notice before releasing your version of this game to the public in GitHub, as I've worked hard to get this game to work properly.
+
+# Here's an example of gameplay in Jewel Bondz:
+<p> 
+  <img alt=demonstration src="./demonstration.gif" width=769 height=434/>
+</p>
