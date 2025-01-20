@@ -1,8 +1,8 @@
 /**
- * The game scene. (WIP)
+ * The game scene.
  * 
  * By: Sam Corbett
- * Version: 0.8
+ * Version: 1.0
  * Since: 2025/01/07
  */
 
@@ -134,6 +134,7 @@ export class GameScene extends Phaser.Scene {
         const gemTypes = ['gem1', 'gem2', 'gem3', 'gem4', 'gem5'];
         let gemTypeDistribution;
     
+        // Set the gem type distribution based on the number of gems to spawn
         if (this.numGemsToSpawn <= 10) {
             gemTypeDistribution = ['gem1', 'gem2'];
         } else if (this.numGemsToSpawn <= 15) {
@@ -144,9 +145,12 @@ export class GameScene extends Phaser.Scene {
             gemTypeDistribution = gemTypes;
         }
 
+        // Spawn the gems
         for (let counter1 = 0; counter1 < totalGemsToSpawn; counter1++) {
             let xCord, yCord, gem, overlap;
     
+            // Check if the gem is overlapping with any other gem
+            // If it is, generate a new random position
             do {
                 xCord = Phaser.Math.Between(400, 1900);
                 yCord = Phaser.Math.Between(20, 1060);
@@ -162,6 +166,7 @@ export class GameScene extends Phaser.Scene {
                 }
             } while (overlap);
     
+            // Setting the gem type
             const gemType = gemTypeDistribution[Math.floor(Math.random() * gemTypeDistribution.length)];
             gem = this.add.image(xCord, yCord, gemType);
             gem.setScale(0.07);
@@ -169,15 +174,19 @@ export class GameScene extends Phaser.Scene {
             gem.setDepth(0)
             this.gems.push(gem);
     
+            // Add the pointerdown event listener
+            // when the gem is clicked
             gem.on('pointerdown', () => {
                 this.isGemClicked = true;
                 this.selectedGem = gem;
                 this.time.delayedCall(150, () => {
                     this.sound.play('jewelSound');
+                    // Start drawing the line
                     if (this.input.activePointer.isDown) {
                         this.isDrawingLine = true;
                         this.vectorLine.startDrawing(gem.x, gem.y);
                     } else {
+                        // If the conditions are met, destroy the gem
                         if (this.isGemClicked && !this.isDrawingLine && this.selectedGem) {
                             this.selectedGem.destroy();
                             this.gems = this.gems.filter(g => g !== this.selectedGem);
@@ -193,6 +202,11 @@ export class GameScene extends Phaser.Scene {
 
     // Update Method
     update() {
+        /**
+         * If the pointer is down and the gem is clicked
+         * and the selected gem is not null,
+         * Draw the line.
+         */
         if (this.input.activePointer.isDown && this.isGemClicked && this.selectedGem) {
             this.isDrawingLine = true;
             this.vectorLine.onPointerMove(this.input.activePointer);
@@ -200,6 +214,7 @@ export class GameScene extends Phaser.Scene {
             const pointer = this.input.activePointer;
             let overlappingGem: Phaser.GameObjects.Image | null = null;
     
+            // Check if the pointer is overlapping with any gem
             for (let counter = 0; counter < this.gems.length; counter++) {
                 const gem = this.gems[counter];
                 if (gem.getBounds().contains(pointer.x, pointer.y) && gem !== this.selectedGem) {
@@ -216,9 +231,6 @@ export class GameScene extends Phaser.Scene {
                 this.selectedGem = overlappingGem;
                 this.sound.play('jewelSound');
                 this.vectorLine.startDrawing(overlappingGem.x, overlappingGem.y);
-    
-                // Debugging: Log the locked lines
-                console.log('Locked Lines:', this.vectorLine.lockedLines);
             }
         } else {
             this.isDrawingLine = false;
@@ -230,8 +242,12 @@ export class GameScene extends Phaser.Scene {
 
     // Pointer Up Method
     private onPointerUp() {
+        // If the gem is clicked and the selected gem is not null
+        // Check if the line is formed
         if (this.isGemClicked && this.selectedGem) {
             let endX, endY;
+            // If the line is locked, set the end point to the start point
+            // Else set the end point to the pointer position
             if (this.vectorLine.isLocked) {
                 endX = this.vectorLine.startPoint.x;
                 endY = this.vectorLine.startPoint.y;
@@ -284,6 +300,7 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
+    // Update Score Method
     private updateScore(points: number) {
         this.score += points;
         this.scoreText.setText(`${this.score}`);
@@ -383,8 +400,6 @@ export class GameScene extends Phaser.Scene {
             triangleGems[counter].destroy();
         }
         this.gems = this.gems.filter(gem => !triangleGems.includes(gem));
-
-        console.log('Inside Gems:', insideGemsCount);
 
         // Increment turns if there are gems inside the triangle
         if (insideGemsCount > 0) {
